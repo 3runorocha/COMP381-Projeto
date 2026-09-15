@@ -51,17 +51,17 @@ Autoload: game_state.gd
 
 ## D1 · 15/09 ter · Projeto e movimento
 
-- [ ] Criar projeto Godot 4, renderer Forward+, resolução e janela definidas
-- [ ] `Main.tscn`: Node3D raiz, `WorldEnvironment` com céu, `DirectionalLight3D` com sombra
-- [ ] `Player.tscn`: `CharacterBody3D` + `CollisionShape3D` (cápsula) + `MeshInstance3D` placeholder
-- [ ] `player_controller.gd`:
+- [x] Criar projeto Godot 4, renderer Forward+, resolução e janela definidas
+- [x] `Main.tscn`: Node3D raiz, `WorldEnvironment` com céu, `DirectionalLight3D` com sombra
+- [x] `Player.tscn`: `CharacterBody3D` + `CollisionShape3D` (cápsula) + `MeshInstance3D` placeholder
+- [x] `player_controller.gd`:
   - avanço constante: `velocity.z = -speed`
   - lateral por teclado: `Input.get_axis("ui_left", "ui_right")`
   - lateral por mouse: `InputEventMouseMotion.relative.x` acumulado
   - suavizar com `move_toward(x, alvo_x, lateral_speed * delta)`
   - `clamp(alvo_x, -meia_largura, meia_largura)`
-- [ ] `Camera3D` atrás e acima, seguindo com `lerp`, não filha rígida, senão treme
-- [ ] Pista placeholder com `CSGBox3D` longo
+- [x] `Camera3D` atrás e acima, seguindo com `lerp`, não filha rígida, senão treme
+- [x] Pista placeholder com `CSGBox3D` longo
 
 **Pronto quando:** percorre a pista inteira, muda de faixa com teclado **e** mouse, câmera não treme.
 
