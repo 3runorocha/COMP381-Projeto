@@ -111,6 +111,7 @@ Autoload: game_state.gd
 - [ ] Tela de derrota ligada em `game_over`
 - [ ] Reiniciar com tecla, via `reload_current_scene`
 - [ ] Menu inicial mínimo
+- [ ] No menu, o jogador escolhe a fonte de controle, teclado **ou** mouse, chamando `definir_modo()` no `Player`
 
 **Pronto quando:** começa, joga, ganha ou perde e reinicia sem fechar o jogo.
 
