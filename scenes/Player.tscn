@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/player_controller.gd" id="1_ctrl"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_lider"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="Mesh_lider"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_lider"]
+albedo_color = Color(0.92, 0.36, 0.13, 1)
+roughness = 0.6
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_ctrl")
+
+[node name="Colisao" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_lider")
+
+[node name="Malha" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_lider")
+material_override = SubResource("Mat_lider")
