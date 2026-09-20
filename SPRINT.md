@@ -1,6 +1,8 @@
 # Sprint AB1 Computação Gráfica, 17 dias
 
 **Início:** 15/09/2026 (ter) · **Entrega:** 01/10/2026 (qui), um dia antes do prazo oficial.
+> **Prazo adiado.** O professor adiou a entrega em cerca de 10 dias. Bruno confirma a data exata na terca, 22/09/2026. Ate la o calendario abaixo segue valendo como ordem das tarefas, nao como datas.
+
 **Stack:** Godot 4, renderer Forward+, GDScript. Modelagem em Blender, export glTF.
 
 ## Princípio de ordem
