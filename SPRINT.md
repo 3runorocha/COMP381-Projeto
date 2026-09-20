@@ -67,27 +67,27 @@ Autoload: game_state.gd
 
 ## D2 · 16/09 qua · GameState e portão
 
-- [ ] Autoload `game_state.gd`:
+- [x] Autoload `game_state.gd`:
   - `enum Op { ADD, SUB, MUL, DIV }`
   - `var count: int = 1`
   - `signal count_changed(anterior: int, novo: int)`
   - `signal game_over`
-- [ ] `func apply(op: Op, v: int) -> void` com `match`, e **piso na divisão**: `count = floori(count / float(v))`
-- [ ] `count = maxi(count, 0)` e emitir `game_over` ao chegar em 0
-- [ ] `Gate.tscn`: `Area3D` + `CollisionShape3D` + `MeshInstance3D` (plano translúcido) + `Label3D`
-- [ ] `gate.gd`: `@export var op: GameState.Op` e `@export var value: int`
-- [ ] `_ready()` escreve o texto na `Label3D` com billboard ligado, e pinta verde ou vermelho pelo sinal
-- [ ] `body_entered` chama `GameState.apply(op, value)`
+- [x] `func apply(op: Op, v: int) -> void` com `match`, e **piso na divisão**: `count = floori(count / float(v))`
+- [x] `count = maxi(count, 0)` e emitir `game_over` ao chegar em 0
+- [x] `Gate.tscn`: `Area3D` + `CollisionShape3D` + `MeshInstance3D` (plano translúcido) + `Label3D`
+- [x] `gate.gd`: `@export var op: GameState.Op` e `@export var value: int`
+- [x] `_ready()` escreve o texto na `Label3D` com billboard ligado, e pinta verde ou vermelho pelo sinal
+- [x] `body_entered` chama `GameState.apply(op, value)`
 
 **Pronto quando:** atravessar muda o número, inclusive 20 dividido por 3 dando 6.
 
 ## D3 · 17/09 qui · Par de portões e HUD
 
-- [ ] `GatePair.tscn` com dois `Gate` lado a lado e `gate_pair.gd`
-- [ ] **Só o líder dispara.** Pôr o `Player` sozinho na collision layer 1 e a mask do portão apenas na 1. Sem isso o cordão atravessa os dois portões e a mecânica quebra.
-- [ ] Ao consumir um portão, desativar o irmão com `set_deferred` em `monitoring`
-- [ ] `HUD.tscn`: `CanvasLayer` + `Label` grande, ligado em `count_changed`
-- [ ] Feedback: `Tween` no número, verde ao subir e vermelho ao descer
+- [x] `GatePair.tscn` com dois `Gate` lado a lado e `gate_pair.gd`
+- [x] **Só o líder dispara.** Pôr o `Player` sozinho na collision layer 1 e a mask do portão apenas na 1. Sem isso o cordão atravessa os dois portões e a mecânica quebra.
+- [x] Ao consumir um portão, desativar o irmão com `set_deferred` em `monitoring`
+- [x] `HUD.tscn`: `CanvasLayer` + `Label` grande, ligado em `count_changed`
+- [x] Feedback: `Tween` no número, verde ao subir e vermelho ao descer
 
 **Pronto quando:** o par dispara uma vez só e o HUD reflete na hora.
 
@@ -121,6 +121,7 @@ Autoload: game_state.gd
 - [ ] Calibrar cada par pela fórmula de empate, soma igual a N vezes (multiplicador menos 1), com margem de 20 a 40 por cento
 - [ ] Garantir 2 segundos de leitura antes de cada bifurcação, ou seja, distância igual a velocidade vezes 2
 - [ ] Alternar qual lado vence, para o jogador não decorar
+- [ ] Divisor central entre os dois portões do par. Sem ele, com o jogador em `x=0` a cápsula toca os dois e qual lado vence fica arbitrário
 
 **Pronto quando:** existe **uma fase completa de 2 a 3 minutos**, jogável do início ao fim.
 

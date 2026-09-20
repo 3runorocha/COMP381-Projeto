@@ -1,7 +1,9 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/camera_follow.gd" id="2_camera"]
+[ext_resource type="PackedScene" path="res://scenes/GatePair.tscn" id="3_par"]
+[ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="4_hud"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
 sky_horizon_color = Color(0.65, 0.65, 0.68, 1)
@@ -53,6 +55,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 0.1, -200)
 size = Vector3(0.8, 0.6, 420)
 material = SubResource("Mat_borda")
 
+[node name="Par1" parent="." instance=ExtResource("3_par")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
+
+[node name="Par2" parent="." instance=ExtResource("3_par")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -80)
+
+[node name="Esquerda" parent="Par2" index="0"]
+valor = 16
+
+[node name="Par3" parent="." instance=ExtResource("3_par")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -120)
+
+[node name="Esquerda" parent="Par3" index="0"]
+operacao = 1
+valor = 18
+
+[node name="Direita" parent="Par3" index="1"]
+operacao = 3
+valor = 2
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
@@ -61,3 +83,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, 8)
 fov = 65.0
 script = ExtResource("2_camera")
 alvo_path = NodePath("../Player")
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]

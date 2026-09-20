@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/gate_pair.gd" id="1_pair"]
+[ext_resource type="PackedScene" path="res://scenes/Gate.tscn" id="2_gate"]
+
+[node name="GatePair" type="Node3D"]
+script = ExtResource("1_pair")
+
+[node name="Esquerda" parent="." instance=ExtResource("2_gate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 1.5, 0)
+operacao = 0
+valor = 14
+
+[node name="Direita" parent="." instance=ExtResource("2_gate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 1.5, 0)
+operacao = 2
+valor = 2
