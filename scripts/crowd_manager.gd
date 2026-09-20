@@ -14,10 +14,11 @@ const ANGULO_AUREO: float = 2.39996323
 
 @export var lider_path: NodePath = ^"../Player"
 @export var cena_guerreiro: PackedScene
-## Raio base da formacao, antes da escala por contagem.
-@export var espalhamento_base: float = 0.34
+## Distancia entre vizinhos na espiral. Precisa ser maior que o diametro do
+## corpo (2 x 0.24 = 0.48), senao os guerreiros se interpenetram.
+@export var espalhamento_base: float = 0.55
 ## Quanto o cordao fica atras do lider.
-@export var recuo: float = 2.2
+@export var recuo: float = 3.0
 ## Altura do centro do corpo dos guerreiros.
 @export var altura: float = 0.7
 ## Quao rapido os corpos perseguem sua vaga na formacao.
@@ -26,7 +27,7 @@ const ANGULO_AUREO: float = 2.39996323
 var _lider: Node3D = null
 var _corpos: Array[Node3D] = []
 var _visiveis: int = 0
-var _espalhamento: float = 0.34
+var _espalhamento: float = 0.55
 
 
 func _ready() -> void:
@@ -65,7 +66,9 @@ func _aplicar(contagem: int, instantaneo: bool) -> void:
     # A contagem entra no raio pela raiz: dobrar o cordao nao dobra a largura,
     # so a area. E o mesmo que o olho espera de gente se juntando.
     var escala := sqrt(float(maxi(contagem, 1))) / sqrt(float(MAX_VISIVEL))
-    _espalhamento = espalhamento_base * clampf(escala, 0.6, 1.8)
+    # O piso e 1.0 de proposito: espalhamento_base ja vale o diametro do
+    # corpo, entao encolher abaixo disso volta a sobrepor os guerreiros.
+    _espalhamento = espalhamento_base * clampf(escala, 1.0, 1.25)
 
     for i in MAX_VISIVEL:
         var corpo := _corpos[i]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [sub_resource type="CapsuleMesh" id="Malha_guerreiro"]
-radius = 0.28
+radius = 0.24
 height = 1.4
 
 [sub_resource type="StandardMaterial3D" id="Mat_guerreiro"]

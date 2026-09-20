@@ -22,7 +22,7 @@ enum Modo {
 ## Velocidade maxima do deslocamento lateral.
 @export var velocidade_lateral: float = 10.0
 ## Metade da largura util da pista. O alvo lateral nunca passa disso.
-@export var meia_largura_pista: float = 5.0
+@export var meia_largura_pista: float = 4.0
 ## Quanto o movimento do mouse desloca o alvo lateral.
 @export var sensibilidade_mouse: float = 0.012
 ## Quao rapido a posicao real persegue o alvo. Maior = mais seco.
