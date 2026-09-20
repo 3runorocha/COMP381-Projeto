@@ -31,6 +31,8 @@ var _espalhamento: float = 0.55
 
 
 func _ready() -> void:
+    # Os corpos sao movidos por script em _process, como a camera.
+    physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
     _lider = get_node_or_null(lider_path) as Node3D
     if _lider == null:
         push_warning("crowd_manager: lider nao encontrado em '%s'." % lider_path)
@@ -98,7 +100,9 @@ func _process(delta: float) -> void:
 func _vaga(indice: int) -> Vector3:
     var angulo := float(indice) * ANGULO_AUREO
     var raio := _espalhamento * sqrt(float(indice))
-    var centro := _lider.global_position
+    # Interpolada, pelo mesmo motivo da camera: ler a posicao crua faria o
+    # cordao inteiro tremer junto com o enquadramento.
+    var centro := _lider.get_global_transform_interpolated().origin
     return Vector3(
         centro.x + cos(angulo) * raio,
         altura,

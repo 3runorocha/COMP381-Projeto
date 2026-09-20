@@ -20,6 +20,9 @@ var _alvo: Node3D = null
 
 
 func _ready() -> void:
+    # A camera e movida por script em _process, nao pela fisica. Deixar o
+    # motor interpolar por cima disso so adicionaria atraso.
+    physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
     _alvo = get_node_or_null(alvo_path) as Node3D
     if _alvo == null:
         push_warning("camera_follow: alvo nao encontrado em '%s'." % alvo_path)
@@ -35,11 +38,22 @@ func _process(delta: float) -> void:
     # camera fica mais dura em maquina rapida e mais mole em maquina lenta.
     var peso := 1.0 - exp(-suavidade * delta)
     global_position = global_position.lerp(_posicao_desejada(), peso)
-    look_at(_alvo.global_position + Vector3.UP * altura_do_olhar)
+    look_at(_alvo_posicao() + Vector3.UP * altura_do_olhar)
 
 
 func _posicao_desejada() -> Vector3:
-    var base := _alvo.global_position + deslocamento
+    var alvo := _alvo_posicao()
+    var base := alvo + deslocamento
     # A camera so acompanha parte do lateral, para dar sensacao de desvio.
-    base.x = _alvo.global_position.x * acompanha_lateral
+    base.x = alvo.x * acompanha_lateral
     return base
+
+
+## Posicao do alvo INTERPOLADA entre os passos da fisica.
+##
+## O jogador anda em _physics_process, travado a 60 Hz. Lendo global_position
+## direto, a camera ve o alvo parado durante varios frames de render e depois
+## pulando de uma vez: ela alcanca, o alvo salta, ela alcanca de novo. Isso e
+## a tela tremendo.
+func _alvo_posicao() -> Vector3:
+    return _alvo.get_global_transform_interpolated().origin
