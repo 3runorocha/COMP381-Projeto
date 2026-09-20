@@ -95,14 +95,14 @@ Autoload: game_state.gd
 
 ## D4 · 18/09 sex · Cordão
 
-- [ ] `Guerreiro.tscn`: `Node3D` + `MeshInstance3D` placeholder
-- [ ] `crowd_manager.gd` com `const MAX_VISIBLE := 25` e pool de instâncias, reaproveitando em vez de liberar a cada portão
-- [ ] `refresh()` ligado em `count_changed`, mostrando `mini(count, MAX_VISIBLE)` corpos
-- [ ] Formação por ângulo áureo, que distribui sem sobrepor:
+- [x] `Guerreiro.tscn`: `Node3D` + `MeshInstance3D` placeholder
+- [x] `crowd_manager.gd` com `const MAX_VISIBLE := 25` e pool de instâncias, reaproveitando em vez de liberar a cada portão
+- [x] `refresh()` ligado em `count_changed`, mostrando `mini(count, MAX_VISIBLE)` corpos
+- [x] Formação por ângulo áureo, que distribui sem sobrepor:
   - `ang = i * 2.39996`
   - `raio = spread * sqrt(i)`
   - `spread` proporcional a `sqrt(count)`, para inchar sem renderizar mais
-- [ ] Cada corpo segue o líder com `lerp` e atraso proporcional ao índice
+- [x] Cada corpo segue o líder com `lerp` e atraso proporcional ao índice
 
 **Pronto quando:** contagem 240 desenha 25 corpos, o grupo incha visivelmente, sem engasgo.
 

@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/camera_follow.gd" id="2_camera"]
 [ext_resource type="PackedScene" path="res://scenes/GatePair.tscn" id="3_par"]
 [ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://scenes/Crowd.tscn" id="5_crowd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
 sky_horizon_color = Color(0.65, 0.65, 0.68, 1)
@@ -77,6 +78,8 @@ valor = 2
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+
+[node name="Crowd" parent="." instance=ExtResource("5_crowd")]
 
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, 8)

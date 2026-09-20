@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="CapsuleMesh" id="Malha_guerreiro"]
+radius = 0.28
+height = 1.4
+
+[sub_resource type="StandardMaterial3D" id="Mat_guerreiro"]
+albedo_color = Color(0.25, 0.45, 0.78, 1)
+roughness = 0.65
+
+[node name="Guerreiro" type="Node3D"]
+
+[node name="Malha" type="MeshInstance3D" parent="."]
+mesh = SubResource("Malha_guerreiro")
+material_override = SubResource("Mat_guerreiro")
