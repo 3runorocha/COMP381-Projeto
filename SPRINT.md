@@ -108,12 +108,12 @@ Autoload: game_state.gd
 
 ## D5 · 19/09 sáb · Ciclo completo
 
-- [ ] `FinishLine` com `Area3D` no fim da pista
-- [ ] Tela de vitória com a contagem final
-- [ ] Tela de derrota ligada em `game_over`
-- [ ] Reiniciar com tecla, via `reload_current_scene`
-- [ ] Menu inicial mínimo
-- [ ] No menu, o jogador escolhe a fonte de controle, teclado **ou** mouse, chamando `definir_modo()` no `Player`
+- [x] `FinishLine` com `Area3D` no fim da pista
+- [x] Tela de vitória com a contagem final
+- [x] Tela de derrota ligada em `game_over`
+- [x] Reiniciar com tecla, via `reload_current_scene`
+- [x] Menu inicial mínimo
+- [x] No menu, o jogador escolhe a fonte de controle, teclado **ou** mouse, chamando `definir_modo()` no `Player`
 
 **Pronto quando:** começa, joga, ganha ou perde e reinicia sem fechar o jogo.
 

@@ -20,6 +20,8 @@ const CONTAGEM_INICIAL: int = 10
 signal contagem_mudou(anterior: int, novo: int)
 ## Emitido quando a contagem chega a zero.
 signal fim_de_jogo
+## Emitido quando o jogador cruza a linha de chegada.
+signal vitoria
 
 var contagem: int = CONTAGEM_INICIAL
 
@@ -33,6 +35,17 @@ func reiniciar() -> void:
     _acabou = false
     if anterior != contagem:
         contagem_mudou.emit(anterior, contagem)
+
+
+## Encerra a partida com vitoria. Chamado pela linha de chegada.
+##
+## Usa a mesma trava do fim por zero: depois que a partida acaba, de um jeito
+## ou de outro, portao nenhum mexe mais na contagem.
+func concluir() -> void:
+    if _acabou:
+        return
+    _acabou = true
+    vitoria.emit()
 
 
 ## Aplica um portao sobre a contagem atual.

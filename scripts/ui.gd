@@ -1,0 +1,81 @@
+extends CanvasLayer
+## Menu inicial, vitoria e derrota.
+##
+## Roda com process_mode ALWAYS: os paineis precisam responder enquanto a
+## arvore esta pausada, que e como a partida fica parada por tras deles.
+
+@export var player_path: NodePath = ^"../Player"
+
+@onready var _menu: Control = $Menu
+@onready var _vitoria: Control = $Vitoria
+@onready var _derrota: Control = $Derrota
+@onready var _resultado: Label = $Vitoria/Caixa/Resultado
+@onready var _placar_derrota: Label = $Derrota/Caixa/Mensagem
+
+var _player: Node = null
+
+
+func _ready() -> void:
+    # A cena pode estar recomecando depois de um reload, e o autoload
+    # sobrevive ao reload, entao a contagem precisa voltar ao inicio aqui.
+    GameState.reiniciar()
+    _player = get_node_or_null(player_path)
+
+    GameState.fim_de_jogo.connect(_on_derrota)
+    GameState.vitoria.connect(_on_vitoria)
+
+    $Menu/Caixa/BotaoTeclado.pressed.connect(_comecar.bind(0))
+    $Menu/Caixa/BotaoMouse.pressed.connect(_comecar.bind(1))
+    $Vitoria/Caixa/BotaoReiniciar.pressed.connect(_reiniciar)
+    $Derrota/Caixa/BotaoReiniciar.pressed.connect(_reiniciar)
+
+    _mostrar(_menu)
+    $Menu/Caixa/BotaoTeclado.grab_focus()
+
+
+func _unhandled_input(evento: InputEvent) -> void:
+    if not evento.is_action_pressed(&"ui_accept"):
+        return
+    if _vitoria.visible or _derrota.visible:
+        _reiniciar()
+
+
+## Mostra um painel e pausa a partida. `nulo` volta ao jogo.
+func _mostrar(painel: Control) -> void:
+    _menu.visible = painel == _menu
+    _vitoria.visible = painel == _vitoria
+    _derrota.visible = painel == _derrota
+
+    var pausado := painel != null
+    get_tree().paused = pausado
+
+    if pausado:
+        # Se a partida estava no modo mouse, o cursor esta capturado e nao da
+        # para clicar em botao nenhum.
+        Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _comecar(modo: int) -> void:
+    _mostrar(null)
+    if _player != null:
+        _player.definir_modo(modo)
+
+
+func _on_vitoria() -> void:
+    _resultado.text = "Voce chegou com %d guerreiros" % GameState.contagem
+    _mostrar(_vitoria)
+    $Vitoria/Caixa/BotaoReiniciar.grab_focus()
+
+
+func _on_derrota() -> void:
+    _placar_derrota.text = "O cordao acabou no meio do caminho"
+    _mostrar(_derrota)
+    $Derrota/Caixa/BotaoReiniciar.grab_focus()
+
+
+func _reiniciar() -> void:
+    # Despausar antes de recarregar: recarregar com a arvore pausada deixa a
+    # cena nova parada e sem painel nenhum para despausar.
+    get_tree().paused = false
+    GameState.reiniciar()
+    get_tree().reload_current_scene()
