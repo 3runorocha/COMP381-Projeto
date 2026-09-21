@@ -28,6 +28,7 @@ func _ready() -> void:
         push_warning("camera_follow: alvo nao encontrado em '%s'." % alvo_path)
         return
     global_position = _posicao_desejada()
+    _fixar_orientacao()
 
 
 func _process(delta: float) -> void:
@@ -38,7 +39,18 @@ func _process(delta: float) -> void:
     # camera fica mais dura em maquina rapida e mais mole em maquina lenta.
     var peso := 1.0 - exp(-suavidade * delta)
     global_position = global_position.lerp(_posicao_desejada(), peso)
-    look_at(_alvo_posicao() + Vector3.UP * altura_do_olhar)
+
+
+## Inclinacao unica, calculada uma vez, e nunca mais tocada.
+##
+## A camera NAO gira durante a partida. Com look_at seguindo o jogador, ir
+## para o lado girava o enquadramento, o ponto de fuga andava junto e a pista
+## parecia tombar. Fixando a orientacao, a pista fica sempre reta e o que se
+## mexe e so o deslocamento lateral, que e o que o jogador precisa ler.
+func _fixar_orientacao() -> void:
+    var ate_o_olhar := Vector3(0.0, altura_do_olhar, 0.0) - deslocamento
+    var chao := sqrt(ate_o_olhar.x * ate_o_olhar.x + ate_o_olhar.z * ate_o_olhar.z)
+    rotation = Vector3(atan2(ate_o_olhar.y, chao), 0.0, 0.0)
 
 
 func _posicao_desejada() -> Vector3:
