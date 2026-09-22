@@ -110,10 +110,27 @@ possivel se a contagem alcancar o preco.
 - **Pendente:** o que acontece quando nenhum dos dois lados e pagavel. O
   coerente com o resto seria fim de partida, igual ao zero.
 
-**Regra de paridade pedida por Bruno:** se a contagem estiver impar, o portao
-seguinte deve torna-la par. Precisa valer para **os dois** lados do par, senao
-escolher o lado errado deixa impar de novo. Pendente saber a intencao: evitar
-resto na divisao, ou ensinar par e impar. Isso muda como os valores sao gerados.
+**Divisao sempre exata (decidido em 21/09).** A intencao de Bruno e nunca
+deixar resto. Paridade sozinha nao entrega isso: ela resolve `/2`, mas `/3`
+sobre 20 continua com resto. A regra correta e **o divisor precisa dividir a
+contagem**.
+
+Abordagem escolhida: **escolher o divisor em tempo de execucao**, a partir da
+contagem real, no momento em que o par e gerado. Se nenhum divisor candidato
+dividir exato, usar subtracao naquele lado. Isso dispensa o portao corretor de
+paridade e nao restringe o gerador. Funciona porque no modo infinito os pares
+nascem conforme o jogador avanca: gera-se o proximo assim que o anterior e
+consumido, a distancia suficiente para os 2 segundos de leitura.
+
+**Consequencia:** com divisao sempre exata, a divisao deixa de poder matar,
+porque `n / d` com `d` dividindo `n` nunca chega a zero. A observacao de que "a
+divisao pode matar direto", nas regras dos portoes acima, passa a valer apenas
+para subtracao e pedagio.
+
+**Quantidade de corpos:** fica em 25 por enquanto. Bruno rediscute quando a
+sprite final do guerreiro existir.
+
+**Pedagio impagavel:** a intencao e que nunca aconteca. Tratamento a definir.
 
 ## Estrutura
 
