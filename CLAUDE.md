@@ -64,6 +64,39 @@ visível o jogo inteiro. É ele que sustenta a nota de qualidade e realismo, e p
 isso **nunca é cortado do escopo**. O primeiro corte, se o prazo apertar, é o
 detalhe do guerreiro do cordão.
 
+## Direcao futura (decidida em 21/09/2026, ainda NAO implementada)
+
+Bruno quer virar o jogo para **infinito**, com a velocidade dos personagens
+subindo ao longo da corrida. Isso ainda nao foi feito e muda decisoes ja
+tomadas. Antes de implementar, resolver os pontos abaixo.
+
+**Ja atendido, nao refazer:**
+
+- *"Zero ou negativo acaba a partida"* ja e o comportamento. `Estado.resultado()`
+  trava em zero com `maxi(saida, 0)` e `aplicar()` dispara `fim_de_jogo`.
+- *"Logica escalavel para muitos bonecos"* ja existe: a contagem logica e
+  ilimitada e so 25 corpos sao desenhados. O que **nao** existe e ver centenas
+  de corpos na tela. Isso exigiria `MultiMeshInstance3D`, que nao faz animacao
+  esqueletica, e foi deliberadamente evitado para os guerreiros poderem dancar.
+
+**Conflitos a resolver:**
+
+- **Infinito invalida a linha de chegada e a tela de vitoria do D5**, e troca o
+  D6 de fase montada a mao por um gerador com reciclagem de trechos de pista. O
+  painel de derrota vira tela de placar, entao o trabalho do D5 se aproveita.
+- **Velocidade crescente colide com a regra dos 2 segundos de leitura.** Hoje o
+  espacamento entre pares e fixo (65 unidades). Com a velocidade subindo, o
+  espacamento precisa passar a ser **derivado da velocidade**, senao o tempo de
+  leitura encolhe e o jogo vira teste de reflexo.
+- **Multiplicacao em jogo infinito estoura o inteiro.** Com um `x2` a cada dois
+  portoes, passa do limite de int64 em menos de 60 portoes. O gerador precisa de
+  valor esperado por portao perto de neutro, ou de um teto de contagem.
+
+**Regra de paridade pedida por Bruno:** se a contagem estiver impar, o portao
+seguinte deve torna-la par. Precisa valer para **os dois** lados do par, senao
+escolher o lado errado deixa impar de novo. Pendente saber a intencao: evitar
+resto na divisao, ou ensinar par e impar. Isso muda como os valores sao gerados.
+
 ## Estrutura
 
 ```
