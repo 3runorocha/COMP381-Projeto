@@ -46,11 +46,14 @@ cultura alagoana integradas, não uma servindo de cenário para a outra.
   5 por cento não dói.
 - Valores pequenos: `×2`, `×3`, `÷2`, `÷3`. Multiplicador alto estoura o número
   na tela e só a divisão consegue segurar.
-- **Divisão arredonda para baixo.** Consequência aceita: `1 ÷ 2 = 0`, então a
-  divisão pode matar direto.
+- **Divisão é sempre exata.** O gerador escolhe o divisor contra o MDC das
+  contagens possíveis, então nunca sobra resto. `Estado.resultado()` continua
+  usando piso como rede, mas na prática ela não é exercida, e a divisão não
+  mata. Quem mata é subtração.
 - **Contagem zero é derrota.**
-- Cerca de **2 segundos de leitura** antes de cada bifurcação, senão o jogo testa
-  reflexo em vez de matemática.
+- Mínimo de **2 segundos de leitura** antes de cada bifurcação, senão o jogo
+  testa reflexo em vez de matemática. Hoje o gerador entrega 4 s, derivados da
+  velocidade atual.
 
 ### Decisão técnica central
 
@@ -64,82 +67,77 @@ visível o jogo inteiro. É ele que sustenta a nota de qualidade e realismo, e p
 isso **nunca é cortado do escopo**. O primeiro corte, se o prazo apertar, é o
 detalhe do guerreiro do cordão.
 
-## Direcao futura (decidida em 21/09/2026, ainda NAO implementada)
+## Modo infinito (implementado no D6, 22/09/2026)
 
-Bruno quer virar o jogo para **infinito**, com a velocidade dos personagens
-subindo ao longo da corrida. Isso ainda nao foi feito e muda decisoes ja
-tomadas. Antes de implementar, resolver os pontos abaixo.
+O jogo e um runner **infinito**. Nao ha linha de chegada por padrao: o placar e
+a distancia percorrida. A velocidade sobe com a distancia ate um teto.
 
-**Ja atendido, nao refazer:**
+`scripts/level_generator.gd` gera a pista. Os pares nascem a frente e sao
+reciclados por tras; `scripts/ground_follow.gd` desliza o chao junto com o
+jogador, o que e invisivel porque a pista nao tem textura.
 
-- *"Zero ou negativo acaba a partida"* ja e o comportamento. `Estado.resultado()`
-  trava em zero com `maxi(saida, 0)` e `aplicar()` dispara `fim_de_jogo`.
-- *"Logica escalavel para muitos bonecos"* ja existe: a contagem logica e
-  ilimitada e so 25 corpos sao desenhados. O que **nao** existe e ver centenas
-  de corpos na tela. Isso exigiria `MultiMeshInstance3D`, que nao faz animacao
-  esqueletica, e foi deliberadamente evitado para os guerreiros poderem dancar.
+**Decisoes que custaram medicao, nao refazer sem medir de novo:**
 
-**Conflitos a resolver:**
+- **O espacamento sai da velocidade atual**, nao de uma distancia fixa. Medido,
+  o tempo de leitura fica em 4 s mesmo com a velocidade indo de 12 a 23.
+- **Os pares a frente sao decididos contra o CONJUNTO de contagens possiveis**,
+  nao contra um numero, porque o jogador ainda vai escolher lados antes de
+  chegar neles. Para a divisao fechar exata em qualquer caminho, o divisor
+  precisa dividir o MDC do conjunto.
+- **Exatidao da divisao e exigencia; paridade da contagem nao.** Exigir que o
+  resultado da divisao tambem fosse par derrubou a divisao para 16 aparicoes em
+  600 portoes e degenerou o par negativo em duas subtracoes. A paridade virou
+  preferencia dentro de `_divisor_exato()`, nao regra.
+- **O gatilho do portao tem 3 de profundidade**, nao a espessura do painel. Com
+  velocidade maxima 30 e fisica a 60 Hz o passo por frame chega a 0.5, e um
+  gatilho fino seria atravessado sem disparar.
+- **`redecidir()` existe porque o gerador modela a contagem.** Se algo mudar a
+  contagem por fora (um reiniciar sem recarregar a cena), os pares ja decididos
+  ficam invalidos e precisam ser refeitos.
 
-- **Infinito invalida a linha de chegada e a tela de vitoria do D5**, e troca o
-  D6 de fase montada a mao por um gerador com reciclagem de trechos de pista. O
-  painel de derrota vira tela de placar, entao o trabalho do D5 se aproveita.
-- **Velocidade crescente colide com a regra dos 2 segundos de leitura.** Hoje o
-  espacamento entre pares e fixo (65 unidades). Com a velocidade subindo, o
-  espacamento precisa passar a ser **derivado da velocidade**, senao o tempo de
-  leitura encolhe e o jogo vira teste de reflexo.
-- **Multiplicacao em jogo infinito estoura o inteiro.** Com um `x2` a cada dois
-  portoes, passa do limite de int64 em menos de 60 portoes. O gerador precisa de
-  valor esperado por portao perto de neutro, ou de um teto de contagem.
+**Divida conhecida:** a mistura de operacoes esta desequilibrada. Em soak de 600
+portoes: somar 20%, multiplicar 20%, subtrair 47%, dividir 13%. A causa e que
+contagem impar se propaga (soma par mantem impar, `x3` mantem impar) e em
+contagem alta o par e forcado negativo, sem `x2` para voltar a par, entao trava
+em subtracao. As quatro operacoes aparecem, que era o requisito, mas da para
+melhorar.
 
-**Portao de pedagio (ideia de Bruno, 21/09, nao implementada):** a cada X
-portoes, uma barreira com preco. Passar custa aquele numero de bonecos, e so e
-possivel se a contagem alcancar o preco.
+**Modo fase ainda existe:** `distancia_final` maior que zero no `Gerador`
+reposiciona a linha de chegada e devolve a tela de vitoria. Zero deixa infinito.
+
+### Ainda nao implementado
+
+**Portao de pedagio:** a cada X portoes, uma barreira com preco em bonecos.
 
 - **Nao pode ser so um par de precos diferentes.** Com 50 bonecos, escolher
-  entre pagar 30 ou 10 nao e escolha: pega-se o barato sempre. E a mesma falha
-  de misturar sinais num par comum.
-- **Vira escolha quando o preco encosta na contagem.** Calibrar os dois lados
-  em volta do valor esperado no trecho, de modo que pagar o caro esteja
-  realmente em duvida. Ai a pergunta passa a ser "eu tenho o suficiente?", que
-  e comparacao de grandeza, conteudo diferente do que os portoes de operacao
-  ensinam.
-- **E o ralo que faz o modo infinito fechar.** Multiplicacao sozinha estoura o
-  inteiro em poucos minutos. Pedagio com preco subindo conforme a distancia
-  segura o numero e cria pressao.
-- **Pendente:** o que acontece quando nenhum dos dois lados e pagavel. O
-  coerente com o resto seria fim de partida, igual ao zero.
+  entre pagar 30 ou 10 nao e escolha: pega-se o barato sempre.
+- **Vira escolha quando o preco encosta na contagem.** A pergunta passa a ser
+  "eu tenho o suficiente?", comparacao de grandeza, conteudo diferente do que os
+  portoes de operacao ensinam.
+- **Seria o ralo do modo infinito.** Hoje o teto vem de `CONTAGEM_ALTA`, que
+  forca pares negativos acima de 400. Funciona, mas e um freio artificial.
+- **Pendente:** o que acontece quando nenhum lado e pagavel. Bruno acha que nao
+  deveria acontecer.
 
-**Divisao sempre exata (decidido em 21/09).** A intencao de Bruno e nunca
-deixar resto. Paridade sozinha nao entrega isso: ela resolve `/2`, mas `/3`
-sobre 20 continua com resto. A regra correta e **o divisor precisa dividir a
-contagem**.
-
-Abordagem escolhida: **escolher o divisor em tempo de execucao**, a partir da
-contagem real, no momento em que o par e gerado. Se nenhum divisor candidato
-dividir exato, usar subtracao naquele lado. Isso dispensa o portao corretor de
-paridade e nao restringe o gerador. Funciona porque no modo infinito os pares
-nascem conforme o jogador avanca: gera-se o proximo assim que o anterior e
-consumido, a distancia suficiente para os 2 segundos de leitura.
-
-**Consequencia:** com divisao sempre exata, a divisao deixa de poder matar,
-porque `n / d` com `d` dividindo `n` nunca chega a zero. A observacao de que "a
-divisao pode matar direto", nas regras dos portoes acima, passa a valer apenas
-para subtracao e pedagio.
-
-**Quantidade de corpos:** fica em 25 por enquanto. Bruno rediscute quando a
-sprite final do guerreiro existir.
-
-**Pedagio impagavel:** a intencao e que nunca aconteca. Tratamento a definir.
+**Quantidade de corpos:** fica em 25 ate existir a sprite final do guerreiro.
 
 ## Estrutura
 
 ```
-scenes/Main.tscn      raiz: ambiente, sol, pista, player, camera
-scenes/Player.tscn    CharacterBody3D, líder, collision layer 1
+scenes/Main.tscn        raiz: ambiente, sol, chao, player, gerador, camera, HUD, UI
+scenes/Player.tscn      CharacterBody3D, líder, collision layer 1
+scenes/Gate.tscn        um portão, Area3D com Label3D
+scenes/GatePair.tscn    par de portões com divisor central
+scenes/Crowd.tscn       cordão de guerreiros
+scenes/HUD.tscn         contagem e distância
+scenes/UI.tscn          menu, vitória, derrota
+scenes/FinishLine.tscn  só usada em modo fase
+scripts/game_state.gd   autoload GameState, as 4 operações
+scripts/level_generator.gd
+scripts/ground_follow.gd
 scripts/player_controller.gd
 scripts/camera_follow.gd
-SPRINT.md             plano dia a dia, com checkboxes
+SPRINT.md               plano dia a dia, com checkboxes
 ```
 
 Convenções já estabelecidas no código:
