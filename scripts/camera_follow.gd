@@ -37,8 +37,19 @@ func _process(delta: float) -> void:
 
     # Suavizacao independente de framerate. Com um lerp cru por delta, a
     # camera fica mais dura em maquina rapida e mais mole em maquina lenta.
+    var desejada := _posicao_desejada()
+    # So o lateral e suavizado. Suavizacao de primeira ordem tem erro em
+    # regime permanente igual a velocidade dividida pela constante: com
+    # suavidade 6, a camera fica v/6 atras, ou seja 2 unidades a 12 de
+    # velocidade e 17 a 100. Sem teto de velocidade isso fazia o jogador ir
+    # encolhendo rumo ao horizonte. Em Z o avanco e constante, entao nao ha
+    # nada a suavizar: seguir exato mantem o enquadramento em qualquer
+    # velocidade.
     var peso := 1.0 - exp(-suavidade * delta)
-    global_position = global_position.lerp(_posicao_desejada(), peso)
+    global_position = Vector3(
+        lerpf(global_position.x, desejada.x, peso),
+        desejada.y,
+        desejada.z)
 
 
 ## Inclinacao unica, calculada uma vez, e nunca mais tocada.

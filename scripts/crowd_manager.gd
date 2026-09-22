@@ -23,6 +23,9 @@ const ANGULO_AUREO: float = 2.39996323
 @export var altura: float = 0.7
 ## Quao rapido os corpos perseguem sua vaga na formacao.
 @export var velocidade_seguir: float = 9.0
+## Ate onde o cordao pode chegar de lado. A ponte tem 12 de largura, entao
+## 5.7 deixa o corpo inteiro sobre ela.
+@export var meia_largura_util: float = 5.7
 
 var _lider: Node3D = null
 var _corpos: Array[Node3D] = []
@@ -108,8 +111,17 @@ func _vaga(indice: int) -> Vector3:
     # Interpolada, pelo mesmo motivo da camera: ler a posicao crua faria o
     # cordao inteiro tremer junto com o enquadramento.
     var centro := _lider.get_global_transform_interpolated().origin
+
+    # O grupo inteiro desliza para dentro quando o lider vai para a beirada,
+    # em vez de deixar a metade de tras cair da ponte. O clamp por corpo, logo
+    # abaixo, e so a rede de seguranca para o caso de a formacao ser mais larga
+    # que a propria pista.
+    var raio_maximo := _espalhamento * sqrt(float(MAX_VISIVEL - 1))
+    var folga := maxf(meia_largura_util - raio_maximo, 0.0)
+    var centro_x := clampf(centro.x, -folga, folga)
+
     return Vector3(
-        centro.x + cos(angulo) * raio,
+        clampf(centro_x + cos(angulo) * raio, -meia_largura_util, meia_largura_util),
         altura,
         centro.z + sin(angulo) * raio + recuo
     )

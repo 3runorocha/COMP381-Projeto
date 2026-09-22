@@ -24,7 +24,7 @@ enum Modo {
 ## velocidade escala para sempre.
 @export var velocidade_maxima: float = 0.0
 ## Quanto a velocidade sobe a cada portao atravessado.
-@export var ganho_por_portao: float = 0.55
+@export var ganho_por_portao: float = 1.1
 ## Velocidade maxima do deslocamento lateral.
 @export var velocidade_lateral: float = 10.0
 ## Metade da largura util da pista. O alvo lateral nunca passa disso.
