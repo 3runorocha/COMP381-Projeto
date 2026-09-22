@@ -39,6 +39,12 @@ func operacoes() -> Array:
     return saida
 
 
+## Repassa a profundidade de gatilho aos dois lados.
+func ajustar_gatilho(profundidade: float) -> void:
+    for portao in _portoes():
+        portao.ajustar_gatilho(profundidade)
+
+
 ## Devolve os dois lados ao estado acionavel.
 func rearmar() -> void:
     for portao in _portoes():

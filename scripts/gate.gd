@@ -38,6 +38,18 @@ func configurar(nova_operacao: Estado.Op, novo_valor: int) -> void:
     _atualizar_visual()
 
 
+## Engorda ou afina a caixa de gatilho, sem mexer no painel visivel.
+##
+## Sem teto de velocidade, o passo por frame cresce sem limite: a 180 unidades
+## por segundo, a 60 Hz, o corpo anda 3 por frame e atravessaria um gatilho
+## fino sem disparar. A forma e compartilhada entre os portoes da cena, o que
+## e proposital: todos querem a mesma profundidade.
+func ajustar_gatilho(profundidade: float) -> void:
+    var forma := $Colisao.shape as BoxShape3D
+    if forma != null:
+        forma.size.z = maxf(profundidade, 3.0)
+
+
 ## Volta a poder ser acionado, depois de reciclado para a frente da pista.
 func rearmar() -> void:
     _consumido = false

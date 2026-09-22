@@ -24,6 +24,9 @@ signal fim_de_jogo
 signal vitoria
 
 var contagem: int = CONTAGEM_INICIAL
+## Quantos portoes ja foram atravessados. E o relogio da escalada: portao e a
+## unidade de decisao do jogo, mais estavel que metro ou segundo.
+var portoes_atravessados: int = 0
 
 var _acabou: bool = false
 
@@ -32,6 +35,7 @@ var _acabou: bool = false
 func reiniciar() -> void:
     var anterior := contagem
     contagem = CONTAGEM_INICIAL
+    portoes_atravessados = 0
     _acabou = false
     if anterior != contagem:
         contagem_mudou.emit(anterior, contagem)
@@ -54,6 +58,7 @@ func aplicar(op: Op, valor: int) -> void:
         return
 
     var anterior := contagem
+    portoes_atravessados += 1
     contagem = resultado(op, valor, contagem)
 
     if contagem != anterior:

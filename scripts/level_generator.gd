@@ -20,7 +20,12 @@ extends Node3D
 ## da velocidade atual: com a velocidade subindo, distancia fixa encolheria o
 ## tempo de leitura e o jogo viraria teste de reflexo.
 @export var tempo_entre_pares: float = 4.0
-@export var espacamento_minimo: float = 40.0
+## Piso da janela de leitura. Abaixo disto o jogo testa reflexo, nao
+## matematica, e a mecanica inteira perde o sentido.
+@export var tempo_minimo_entre_pares: float = 2.0
+## Em quantos portoes a janela vai do inicial ao minimo.
+@export var portoes_ate_tempo_minimo: int = 30
+@export var espacamento_minimo: float = 25.0
 ## Distancia total em modo fase. Zero deixa o jogo infinito.
 @export var distancia_final: float = 0.0
 @export var finish_path: NodePath = ^"../FinishLine"
@@ -94,13 +99,31 @@ func _reciclar(par: Node3D) -> void:
 func _posicionar_a_frente(par: Node3D) -> void:
     _z_frente -= _espacamento()
     par.global_position = Vector3(0.0, 0.0, _z_frente)
+    # Gatilho proporcional ao passo por frame, ja que a velocidade nao tem teto.
+    par.ajustar_gatilho(_velocidade() / 60.0 * 6.0)
 
 
 func _espacamento() -> float:
-    var velocidade: float = 12.0
+    return maxf(espacamento_minimo, _velocidade() * _tempo_leitura())
+
+
+func _velocidade() -> float:
     if _player != null and "velocidade_frente" in _player:
-        velocidade = _player.velocidade_frente
-    return maxf(espacamento_minimo, velocidade * tempo_entre_pares)
+        return _player.velocidade_frente
+    return 12.0
+
+
+## Janela de leitura, que encolhe conforme os portoes passam.
+##
+## Aqui e que mora a escalada de dificuldade. Velocidade sozinha nao aperta
+## nada: com o espacamento derivado dela, o portao chegaria a cada 4 segundos
+## para sempre, a 12 ou a 200 de velocidade. O que aperta e o tempo para
+## decidir, e ele tem piso, senao vira jogo de reflexo.
+func _tempo_leitura() -> float:
+    var progresso := clampf(
+        float(GameState.portoes_atravessados) / float(maxi(portoes_ate_tempo_minimo, 1)),
+        0.0, 1.0)
+    return lerpf(tempo_entre_pares, tempo_minimo_entre_pares, progresso)
 
 
 func _decidir(par: Node3D) -> void:

@@ -20,10 +20,11 @@ enum Modo {
 ## Velocidade de avanco atual, em unidades por segundo. Sobe com a distancia
 ## e e lida pelo gerador para espacar os portoes.
 @export var velocidade_frente: float = 12.0
-## Teto da aceleracao. Sem teto, o jogo vira ilegivel em poucos minutos.
-@export var velocidade_maxima: float = 30.0
-## Quanto a velocidade sobe a cada 100 unidades percorridas.
-@export var ganho_por_100: float = 1.1
+## Teto da velocidade. Zero significa SEM TETO: o jogo e infinito, entao a
+## velocidade escala para sempre.
+@export var velocidade_maxima: float = 0.0
+## Quanto a velocidade sobe a cada portao atravessado.
+@export var ganho_por_portao: float = 0.55
 ## Velocidade maxima do deslocamento lateral.
 @export var velocidade_lateral: float = 10.0
 ## Metade da largura util da pista. O alvo lateral nunca passa disso.
@@ -87,15 +88,18 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 
 
-## Velocidade cresce com a distancia percorrida, ate o teto.
+## Velocidade cresce a cada portao, sem teto.
 ##
 ## Quem le isto e o gerador, para esticar o espaco entre portoes na mesma
 ## proporcao. Sem isso o tempo de leitura encolheria junto com a aceleracao.
 func _acelerar() -> void:
-    var percorrido := absf(global_position.z)
-    velocidade_frente = minf(
-        _velocidade_inicial + ganho_por_100 * (percorrido / 100.0),
-        velocidade_maxima)
+    # Por portao, nao por distancia. Ligada a distancia, a rampa virava
+    # exponencial no tempo: a velocidade crescia com a distancia e a distancia
+    # crescia com a velocidade, entao ela se acelerava sozinha.
+    var subida := ganho_por_portao * float(GameState.portoes_atravessados)
+    velocidade_frente = _velocidade_inicial + subida
+    if velocidade_maxima > 0.0:
+        velocidade_frente = minf(velocidade_frente, velocidade_maxima)
 
 
 ## Desloca o alvo lateral e mantem dentro da pista.

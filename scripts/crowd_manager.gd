@@ -92,7 +92,12 @@ func _process(delta: float) -> void:
         # Quem esta mais atras na formacao persegue mais devagar, o que da
         # elasticidade ao grupo em vez de um bloco rigido preso ao lider.
         var folga := 1.0 - 0.45 * (float(i) / float(MAX_VISIVEL))
-        var peso := 1.0 - exp(-velocidade_seguir * folga * delta)
+        # A perseguicao escala com a velocidade do lider: sem isso, o cordao
+        # ficaria cada vez mais para tras conforme a corrida acelera.
+        var ritmo := velocidade_seguir
+        if "velocidade_frente" in _lider:
+            ritmo *= maxf(1.0, _lider.velocidade_frente / 12.0)
+        var peso := 1.0 - exp(-ritmo * folga * delta)
         corpo.global_position = corpo.global_position.lerp(_vaga(i), peso)
 
 

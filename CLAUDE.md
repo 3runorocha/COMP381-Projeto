@@ -78,8 +78,23 @@ jogador, o que e invisivel porque a pista nao tem textura.
 
 **Decisoes que custaram medicao, nao refazer sem medir de novo:**
 
-- **O espacamento sai da velocidade atual**, nao de uma distancia fixa. Medido,
-  o tempo de leitura fica em 4 s mesmo com a velocidade indo de 12 a 23.
+- **Nao ha teto de velocidade.** O jogo e infinito, entao ela escala para
+  sempre. `velocidade_maxima = 0` significa sem teto.
+- **A rampa conta portoes, nao metros.** Ligada a distancia ela virava
+  exponencial no tempo, porque a velocidade crescia com a distancia e a
+  distancia crescia com a velocidade. Portao e a unidade de decisao do jogo, e
+  da uma rampa linear e previsivel.
+- **A escalada de dificuldade NAO esta na velocidade, esta na janela de
+  leitura.** Como o espacamento e derivado da velocidade, acelerar sozinho faz
+  o portao chegar a cada 4 s para sempre, a 12 ou a 800 de velocidade: muda a
+  paisagem, nao o aperto. Quem apertar e `_tempo_leitura()`, que encolhe de 4 s
+  para 2 s ao longo dos primeiros 30 portoes e para ali. O piso de 2 s e
+  deliberado: abaixo dele o jogo testa reflexo e a matematica deixa de importar.
+- **O ritmo de portoes e 1/janela**, independente da velocidade. Depois do
+  portao 30 e um portao a cada 2 s, para sempre.
+- **O gatilho do portao escala com a velocidade** (`velocidade / 60 * 6`), pelo
+  mesmo motivo de nao haver teto: o passo por frame cresce sem limite e um
+  gatilho fixo seria atravessado. Verificado a 872 unidades por segundo.
 - **Os pares a frente sao decididos contra o CONJUNTO de contagens possiveis**,
   nao contra um numero, porque o jogador ainda vai escolher lados antes de
   chegar neles. Para a divisao fechar exata em qualquer caminho, o divisor
