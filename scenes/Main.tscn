@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/camera_follow.gd" id="2_camera"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/Crowd.tscn" id="5_crowd"]
 [ext_resource type="PackedScene" path="res://scenes/FinishLine.tscn" id="6_fim"]
 [ext_resource type="PackedScene" path="res://scenes/UI.tscn" id="7_ui"]
+[ext_resource type="Script" path="res://scripts/ground_follow.gd" id="8_chao"]
+[ext_resource type="Script" path="res://scripts/level_generator.gd" id="9_gerador"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
 sky_horizon_color = Color(0.65, 0.65, 0.68, 1)
@@ -45,43 +47,26 @@ light_energy = 1.1
 shadow_enabled = true
 directional_shadow_max_distance = 55.0
 
-[node name="Pista" type="CSGBox3D" parent="."]
+[node name="Chao" type="Node3D" parent="."]
+script = ExtResource("8_chao")
+
+[node name="Pista" type="CSGBox3D" parent="Chao"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -125)
 use_collision = true
 collision_layer = 2
 collision_mask = 0
-size = Vector3(12, 0.5, 290)
+size = Vector3(12, 0.5, 340)
 material = SubResource("Mat_pista")
 
-[node name="BordaEsquerda" type="CSGBox3D" parent="."]
+[node name="BordaEsquerda" type="CSGBox3D" parent="Chao"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 0.1, -125)
-size = Vector3(0.8, 0.6, 290)
+size = Vector3(0.8, 0.6, 340)
 material = SubResource("Mat_borda")
 
-[node name="BordaDireita" type="CSGBox3D" parent="."]
+[node name="BordaDireita" type="CSGBox3D" parent="Chao"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 0.1, -125)
-size = Vector3(0.8, 0.6, 290)
+size = Vector3(0.8, 0.6, 340)
 material = SubResource("Mat_borda")
-
-[node name="Par1" parent="." instance=ExtResource("3_par")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
-
-[node name="Par2" parent="." instance=ExtResource("3_par")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -115)
-
-[node name="Esquerda" parent="Par2" index="0"]
-valor = 16
-
-[node name="Par3" parent="." instance=ExtResource("3_par")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -180)
-
-[node name="Esquerda" parent="Par3" index="0"]
-operacao = 1
-valor = 18
-
-[node name="Direita" parent="Par3" index="1"]
-operacao = 3
-valor = 2
 
 [node name="FinishLine" parent="." instance=ExtResource("6_fim")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -240)
@@ -90,6 +75,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -240)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
 [node name="Crowd" parent="." instance=ExtResource("5_crowd")]
+
+[node name="Gerador" type="Node3D" parent="."]
+script = ExtResource("9_gerador")
+cena_par = ExtResource("3_par")
 
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, 8)

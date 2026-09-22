@@ -62,13 +62,13 @@ func _comecar(modo: int) -> void:
 
 
 func _on_vitoria() -> void:
-    _resultado.text = "Voce chegou com %d guerreiros" % GameState.contagem
+    _resultado.text = "Voce chegou com %d guerreiros, %d metros" % [GameState.contagem, _metros()]
     _mostrar(_vitoria)
     $Vitoria/Caixa/BotaoReiniciar.grab_focus()
 
 
 func _on_derrota() -> void:
-    _placar_derrota.text = "O cordao acabou no meio do caminho"
+    _placar_derrota.text = "Voce percorreu %d metros" % _metros()
     _mostrar(_derrota)
     $Derrota/Caixa/BotaoReiniciar.grab_focus()
 
@@ -79,3 +79,10 @@ func _reiniciar() -> void:
     get_tree().paused = false
     GameState.reiniciar()
     get_tree().reload_current_scene()
+
+
+## Distancia percorrida, que no modo infinito e o placar.
+func _metros() -> int:
+    if _player == null:
+        return 0
+    return int(absf(_player.global_position.z))

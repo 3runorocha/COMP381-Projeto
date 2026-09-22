@@ -31,6 +31,19 @@ func _ready() -> void:
     body_entered.connect(_on_body_entered)
 
 
+## Troca operacao e valor de uma vez. Usado pelo gerador ao reciclar.
+func configurar(nova_operacao: Estado.Op, novo_valor: int) -> void:
+    operacao = nova_operacao
+    valor = novo_valor
+    _atualizar_visual()
+
+
+## Volta a poder ser acionado, depois de reciclado para a frente da pista.
+func rearmar() -> void:
+    _consumido = false
+    set_deferred(&"monitoring", true)
+
+
 ## Impede que este portao seja acionado. Usado pelo par quando o irmao venceu.
 func desativar() -> void:
     _consumido = true

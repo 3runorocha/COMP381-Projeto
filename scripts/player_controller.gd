@@ -17,8 +17,13 @@ enum Modo {
 
 ## Fonte de controle ativa. O menu do D5 define isto via definir_modo().
 @export var modo: Modo = Modo.TECLADO
-## Velocidade constante de avanco, em unidades por segundo.
+## Velocidade de avanco atual, em unidades por segundo. Sobe com a distancia
+## e e lida pelo gerador para espacar os portoes.
 @export var velocidade_frente: float = 12.0
+## Teto da aceleracao. Sem teto, o jogo vira ilegivel em poucos minutos.
+@export var velocidade_maxima: float = 30.0
+## Quanto a velocidade sobe a cada 100 unidades percorridas.
+@export var ganho_por_100: float = 1.1
 ## Velocidade maxima do deslocamento lateral.
 @export var velocidade_lateral: float = 10.0
 ## Metade da largura util da pista. O alvo lateral nunca passa disso.
@@ -30,9 +35,12 @@ enum Modo {
 
 ## Posicao lateral desejada. A posicao real persegue este valor.
 var _alvo_x: float = 0.0
+## Velocidade com que a partida comecou, base da rampa.
+var _velocidade_inicial: float = 12.0
 
 
 func _ready() -> void:
+    _velocidade_inicial = velocidade_frente
     _alvo_x = global_position.x
     _aplicar_modo()
 
@@ -62,6 +70,8 @@ func _unhandled_input(evento: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+    _acelerar()
+
     if modo == Modo.TECLADO:
         var eixo := Input.get_axis(&"mover_esquerda", &"mover_direita")
         if not is_zero_approx(eixo):
@@ -75,6 +85,17 @@ func _physics_process(delta: float) -> void:
     velocity.y = 0.0
 
     move_and_slide()
+
+
+## Velocidade cresce com a distancia percorrida, ate o teto.
+##
+## Quem le isto e o gerador, para esticar o espaco entre portoes na mesma
+## proporcao. Sem isso o tempo de leitura encolheria junto com a aceleracao.
+func _acelerar() -> void:
+    var percorrido := absf(global_position.z)
+    velocidade_frente = minf(
+        _velocidade_inicial + ganho_por_100 * (percorrido / 100.0),
+        velocidade_maxima)
 
 
 ## Desloca o alvo lateral e mantem dentro da pista.

@@ -5,6 +5,10 @@ extends Node3D
 ## Misturar sinais mata a escolha: o jogador pega o verde no automatico e a
 ## matematica vira enfeite.
 
+## Emitido depois que um dos dois lados foi consumido.
+signal consumido(par: Node3D)
+
+
 func _ready() -> void:
     for portao in _portoes():
         portao.atravessado.connect(_on_atravessado)
@@ -15,6 +19,30 @@ func _on_atravessado(vencedor: Area3D) -> void:
     for portao in _portoes():
         if portao != vencedor:
             portao.desativar()
+    consumido.emit(self)
+
+
+## Define os dois lados de uma vez. Chamado pelo gerador.
+func configurar(op_esq: Estado.Op, val_esq: int, op_dir: Estado.Op, val_dir: int) -> void:
+    var lados := _portoes()
+    if lados.size() != 2:
+        return
+    lados[0].configurar(op_esq, val_esq)
+    lados[1].configurar(op_dir, val_dir)
+
+
+## Operacoes atuais, na ordem esquerda e direita, para o gerador simular.
+func operacoes() -> Array:
+    var saida: Array = []
+    for portao in _portoes():
+        saida.append([portao.operacao, portao.valor])
+    return saida
+
+
+## Devolve os dois lados ao estado acionavel.
+func rearmar() -> void:
+    for portao in _portoes():
+        portao.rearmar()
 
 
 func _portoes() -> Array[Area3D]:

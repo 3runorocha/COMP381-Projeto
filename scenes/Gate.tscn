@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/gate.gd" id="1_gate"]
 
 [sub_resource type="BoxShape3D" id="Forma_portao"]
-size = Vector3(5, 3, 0.4)
+size = Vector3(5, 3, 3)
 
 [sub_resource type="BoxMesh" id="Malha_portao"]
 size = Vector3(5, 3, 0.4)

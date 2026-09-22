@@ -119,13 +119,17 @@ Autoload: game_state.gd
 
 ## D6 · 20/09 dom · A FASE · MARCO M1
 
-- [ ] `Fase1.tscn` com 8 a 12 pares de portões posicionados à mão
-- [ ] Calibrar cada par pela fórmula de empate, soma igual a N vezes (multiplicador menos 1), com margem de 20 a 40 por cento
-- [ ] Garantir 2 segundos de leitura antes de cada bifurcação, ou seja, distância igual a velocidade vezes 2
-- [ ] Alternar qual lado vence, para o jogador não decorar
-- [ ] Divisor central entre os dois portões do par. Sem ele, com o jogador em `x=0` a cápsula toca os dois e qual lado vence fica arbitrário
+- [x] `Fase1.tscn` com 8 a 12 pares de portões posicionados à mão
+- [x] Calibrar cada par pela fórmula de empate, soma igual a N vezes (multiplicador menos 1), com margem de 20 a 40 por cento
+- [x] Garantir 2 segundos de leitura antes de cada bifurcação, ou seja, distância igual a velocidade vezes 2
+- [x] Alternar qual lado vence, para o jogador não decorar
+- [x] Divisor central entre os dois portões do par. Sem ele, com o jogador em `x=0` a cápsula toca os dois e qual lado vence fica arbitrário
 
-**Pronto quando:** existe **uma fase completa de 2 a 3 minutos**, jogável do início ao fim.
+**Feito diferente do planejado:** com a decisão do jogo infinito, o D6 virou um
+**gerador procedural** em vez de uma fase montada à mão. Os pares nascem à frente e
+são reciclados por trás, o espaçamento sai da velocidade atual, e a divisão escolhe
+o divisor contra o MDC das contagens ainda possíveis, para nunca deixar resto.
+Verificado em soak de 600 portões e em 60 s de movimento real.
 
 ---
 
