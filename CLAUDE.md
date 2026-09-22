@@ -92,6 +92,24 @@ tomadas. Antes de implementar, resolver os pontos abaixo.
   portoes, passa do limite de int64 em menos de 60 portoes. O gerador precisa de
   valor esperado por portao perto de neutro, ou de um teto de contagem.
 
+**Portao de pedagio (ideia de Bruno, 21/09, nao implementada):** a cada X
+portoes, uma barreira com preco. Passar custa aquele numero de bonecos, e so e
+possivel se a contagem alcancar o preco.
+
+- **Nao pode ser so um par de precos diferentes.** Com 50 bonecos, escolher
+  entre pagar 30 ou 10 nao e escolha: pega-se o barato sempre. E a mesma falha
+  de misturar sinais num par comum.
+- **Vira escolha quando o preco encosta na contagem.** Calibrar os dois lados
+  em volta do valor esperado no trecho, de modo que pagar o caro esteja
+  realmente em duvida. Ai a pergunta passa a ser "eu tenho o suficiente?", que
+  e comparacao de grandeza, conteudo diferente do que os portoes de operacao
+  ensinam.
+- **E o ralo que faz o modo infinito fechar.** Multiplicacao sozinha estoura o
+  inteiro em poucos minutos. Pedagio com preco subindo conforme a distancia
+  segura o numero e cria pressao.
+- **Pendente:** o que acontece quando nenhum dos dois lados e pagavel. O
+  coerente com o resto seria fim de partida, igual ao zero.
+
 **Regra de paridade pedida por Bruno:** se a contagem estiver impar, o portao
 seguinte deve torna-la par. Precisa valer para **os dois** lados do par, senao
 escolher o lado errado deixa impar de novo. Pendente saber a intencao: evitar
