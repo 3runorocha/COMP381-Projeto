@@ -6,26 +6,38 @@
 script = ExtResource("1_hud")
 
 [node name="Contagem" type="Label" parent="."]
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -160.0
-offset_top = 20.0
-offset_right = 160.0
-offset_bottom = 130.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 84
+offset_left = 30.0
+offset_top = 16.0
+offset_right = 330.0
+offset_bottom = 106.0
+theme_override_colors/font_outline_color = Color(0.05, 0.06, 0.09, 0.85)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 72
 text = "10"
-horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Rotulo" type="Label" parent="."]
+offset_left = 34.0
+offset_top = 132.0
+offset_right = 334.0
+offset_bottom = 160.0
+theme_override_colors/font_outline_color = Color(0.05, 0.06, 0.09, 0.8)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 20
+text = "guerreiros"
 vertical_alignment = 1
 
 [node name="Distancia" type="Label" parent="."]
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -160.0
-offset_top = 122.0
-offset_right = 160.0
-offset_bottom = 158.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 24
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -310.0
+offset_top = 22.0
+offset_right = -30.0
+offset_bottom = 70.0
+grow_horizontal = 0
+theme_override_colors/font_outline_color = Color(0.05, 0.06, 0.09, 0.85)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 32
 text = "0 m"
-horizontal_alignment = 1
+horizontal_alignment = 2
+vertical_alignment = 1
