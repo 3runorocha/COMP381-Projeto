@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/finish_line.gd" id="1_fim"]
+[ext_resource type="Script" path="res://scripts/pista/finish_line.gd" id="1_fim"]
 
 [sub_resource type="BoxShape3D" id="Forma_fim"]
 size = Vector3(13, 5, 1)

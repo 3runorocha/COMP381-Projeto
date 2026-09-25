@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/player_controller.gd" id="1_ctrl"]
+[ext_resource type="Script" path="res://scripts/jogador/player_controller.gd" id="1_ctrl"]
 
 [sub_resource type="CapsuleShape3D" id="Shape_lider"]
 radius = 0.4

@@ -162,21 +162,39 @@ com o do personagem.
 
 ## Estrutura
 
+Organizada por **categoria**, nao por tipo de arquivo. Cada pasta responde "de
+que isso trata?", e o nome dela ja e metade da explicacao.
+
 ```
-scenes/Main.tscn        raiz: ambiente, sol, chao, player, gerador, camera, HUD, UI
-scenes/Player.tscn      CharacterBody3D, líder, collision layer 1
-scenes/Gate.tscn        um portão, Area3D com Label3D
-scenes/GatePair.tscn    par de portões com divisor central
-scenes/Crowd.tscn       cordão de guerreiros
-scenes/HUD.tscn         contagem e distância
-scenes/UI.tscn          menu, vitória, derrota
-scenes/FinishLine.tscn  só usada em modo fase
-scripts/game_state.gd   autoload GameState, as 4 operações
-scripts/level_generator.gd
-scripts/ground_follow.gd
-scripts/player_controller.gd
-scripts/camera_follow.gd
-SPRINT.md               plano dia a dia, com checkboxes
+scenes/Main.tscn          raiz: ambiente, sol, chao, jogador, gerador, camera, HUD, UI
+
+scripts/nucleo/           o que todo o resto usa
+  game_state.gd           autoload GameState: contagem e as 4 operacoes
+  comum.gd                funcoes compartilhadas por mais de um script
+
+scripts/jogador/ e scenes/jogador/
+  player_controller.gd    avanco, controle lateral, rampa de velocidade
+  crowd_manager.gd        cordao de guerreiros
+  camera_follow.gd        camera que persegue o lider
+  Player.tscn  Crowd.tscn  Guerreiro.tscn
+
+scripts/pista/ e scenes/pista/
+  level_generator.gd      gera e recicla os pares, decide os valores
+  gate.gd  gate_pair.gd   um portao, e o par exclusivo
+  ground_follow.gd        chao infinito
+  finish_line.gd          so usada em modo fase
+  Gate.tscn  GatePair.tscn  FinishLine.tscn
+
+scripts/interface/ e scenes/interface/
+  hud.gd                  contagem e distancia
+  ui.gd                   menu, vitoria, derrota
+  HUD.tscn  UI.tscn
+
+docs/guerreiro-referencia.md   pesquisa cultural, com fontes
+tools/blockout_mestre.py       gera o modelo do mestre
+tools/render_preview.py        renderiza previa do blockout
+assets/                        .blend, .glb e audio
+SPRINT.md                      plano dia a dia, com checkboxes
 ```
 
 Convenções já estabelecidas no código:

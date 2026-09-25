@@ -1,14 +1,14 @@
 [gd_scene load_steps=15 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
-[ext_resource type="Script" path="res://scripts/camera_follow.gd" id="2_camera"]
-[ext_resource type="PackedScene" path="res://scenes/GatePair.tscn" id="3_par"]
-[ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="4_hud"]
-[ext_resource type="PackedScene" path="res://scenes/Crowd.tscn" id="5_crowd"]
-[ext_resource type="PackedScene" path="res://scenes/FinishLine.tscn" id="6_fim"]
-[ext_resource type="PackedScene" path="res://scenes/UI.tscn" id="7_ui"]
-[ext_resource type="Script" path="res://scripts/ground_follow.gd" id="8_chao"]
-[ext_resource type="Script" path="res://scripts/level_generator.gd" id="9_gerador"]
+[ext_resource type="PackedScene" path="res://scenes/jogador/Player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/jogador/camera_follow.gd" id="2_camera"]
+[ext_resource type="PackedScene" path="res://scenes/pista/GatePair.tscn" id="3_par"]
+[ext_resource type="PackedScene" path="res://scenes/interface/HUD.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://scenes/jogador/Crowd.tscn" id="5_crowd"]
+[ext_resource type="PackedScene" path="res://scenes/pista/FinishLine.tscn" id="6_fim"]
+[ext_resource type="PackedScene" path="res://scenes/interface/UI.tscn" id="7_ui"]
+[ext_resource type="Script" path="res://scripts/pista/ground_follow.gd" id="8_chao"]
+[ext_resource type="Script" path="res://scripts/pista/level_generator.gd" id="9_gerador"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
 sky_horizon_color = Color(0.65, 0.65, 0.68, 1)
