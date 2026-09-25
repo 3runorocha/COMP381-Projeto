@@ -134,6 +134,28 @@ reposiciona a linha de chegada e devolve a tela de vitoria. Zero deixa infinito.
 - **Pendente:** o que acontece quando nenhum lado e pagavel. Bruno acha que nao
   deveria acontecer.
 
+**Escala do cordao (ideia de Bruno, 24/09, a fazer DEPOIS da modelagem):** o
+mestre fica com tamanho fixo e os guerreiros do cordao encolhem conforme a
+contagem sobe.
+
+- **Encolher e o meio, nao o fim.** Corpo menor le como "mais longe", nao como
+  "mais": e assim que a percepcao funciona. Encolhido demais, o grupo parece se
+  afastar e o asset cultural some justamente quando deveria impressionar.
+- O ganho real e **caber mais corpo na mesma largura de ponte**. Entao a escala
+  deve vir acompanhada de `MAX_VISIVEL` subindo, de 25 para uns 45. O efeito
+  combinado e multidao mais densa, nao mais distante.
+- **Piso na escala**, algo como 1.0 ate 0.7, nunca menos.
+- O mestre com tamanho fixo tambem acerta a hierarquia visual, que e o papel
+  dele no folguedo: lidera o cordao.
+- **Fazer so depois que o guerreiro estiver modelado.** Com capsula, o ponto em
+  que um corpo "some" e chute: depende de silhueta, paleta e chapeu, que ainda
+  nao existem.
+
+**HUD com acabamento:** o layout atual e funcional (cantos livres, centro
+limpo, separador de milhar) mas cru. Bruno quer um HUD bonito, e decidiu fazer
+isso depois de fechar a modelagem do guerreiro, para o visual do HUD conversar
+com o do personagem.
+
 **Quantidade de corpos:** fica em 25 ate existir a sprite final do guerreiro.
 
 ## Estrutura
