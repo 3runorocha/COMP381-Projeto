@@ -49,7 +49,7 @@ var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
     _rng.randomize()
-    _player = get_node_or_null(player_path) as Node3D
+    _player = Comum.achar(self, player_path, "level_generator") as Node3D
     if _player == null or cena_par == null:
         push_warning("level_generator: falta o jogador ou a cena do par.")
         return
@@ -108,9 +108,7 @@ func _espacamento() -> float:
 
 
 func _velocidade() -> float:
-    if _player != null and "velocidade_frente" in _player:
-        return _player.velocidade_frente
-    return 12.0
+    return Comum.velocidade(_player)
 
 
 ## Janela de leitura, que encolhe conforme os portoes passam.
@@ -227,17 +225,6 @@ func _valor_par(x: float, minimo: int) -> int:
     return maxi(v, minimo)
 
 
-## Refaz a decisao de todos os pares da fila a partir da contagem atual.
-##
-## Necessario se a contagem mudar por fora do modelo do gerador, como num
-## reiniciar sem recarregar a cena. Sem isto, um portao de divisao decidido
-## contra o conjunto antigo pode passar a deixar resto.
-func redecidir() -> void:
-    _possiveis = [GameState.contagem]
-    for par in _fila:
-        _decidir(par)
-
-
 func _recalcular_possiveis() -> void:
     var conjunto: Array[int] = [GameState.contagem]
     for par in _fila:
@@ -298,7 +285,7 @@ func _mdc(a: int, b: int) -> int:
 ## Com distancia_final maior que zero o jogo volta a ter fim, para comparar com
 ## o modo infinito sem precisar desfazer nada.
 func _configurar_chegada() -> void:
-    var chegada := get_node_or_null(finish_path) as Area3D
+    var chegada := Comum.achar(self, finish_path, "level_generator") as Area3D
     if chegada == null:
         return
     if distancia_final > 0.0:

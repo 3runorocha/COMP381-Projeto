@@ -21,7 +21,7 @@ var _tween: Tween = null
 
 
 func _ready() -> void:
-    _player = get_node_or_null(player_path) as Node3D
+    _player = Comum.achar(self, player_path, "hud") as Node3D
     GameState.contagem_mudou.connect(_on_contagem_mudou)
     _rotulo.text = str(GameState.contagem)
     _ajustar_pivo()

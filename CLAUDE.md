@@ -106,9 +106,11 @@ jogador, o que e invisivel porque a pista nao tem textura.
 - **O gatilho do portao tem 3 de profundidade**, nao a espessura do painel. Com
   velocidade maxima 30 e fisica a 60 Hz o passo por frame chega a 0.5, e um
   gatilho fino seria atravessado sem disparar.
-- **`redecidir()` existe porque o gerador modela a contagem.** Se algo mudar a
-  contagem por fora (um reiniciar sem recarregar a cena), os pares ja decididos
-  ficam invalidos e precisam ser refeitos.
+- **O gerador MODELA a contagem futura.** Se algo mudar a contagem por fora
+  dele (um reiniciar sem recarregar a cena, por exemplo), os pares ja decididos
+  ficam invalidos e um portao de divisao pode passar a deixar resto. Hoje nao
+  ocorre, porque reiniciar sempre recarrega a cena inteira e o gerador nasce
+  junto. Quem mudar isso precisa refazer a fila do gerador na mesma hora.
 
 **Divida conhecida:** a mistura de operacoes esta desequilibrada. Em soak de 600
 portoes: somar 20%, multiplicar 20%, subtrair 47%, dividir 13%. A causa e que

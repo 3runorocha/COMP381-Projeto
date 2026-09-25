@@ -19,7 +19,7 @@ func _ready() -> void:
     # A cena pode estar recomecando depois de um reload, e o autoload
     # sobrevive ao reload, entao a contagem precisa voltar ao inicio aqui.
     GameState.reiniciar()
-    _player = get_node_or_null(player_path)
+    _player = Comum.achar(self, player_path, "ui")
 
     GameState.fim_de_jogo.connect(_on_derrota)
     GameState.vitoria.connect(_on_vitoria)

@@ -36,9 +36,8 @@ var _espalhamento: float = 0.55
 func _ready() -> void:
     # Os corpos sao movidos por script em _process, como a camera.
     physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
-    _lider = get_node_or_null(lider_path) as Node3D
+    _lider = Comum.achar(self, lider_path, "crowd_manager") as Node3D
     if _lider == null:
-        push_warning("crowd_manager: lider nao encontrado em '%s'." % lider_path)
         return
     if cena_guerreiro == null:
         push_warning("crowd_manager: cena_guerreiro nao definida.")
@@ -54,11 +53,6 @@ func _ready() -> void:
 
     GameState.contagem_mudou.connect(_on_contagem_mudou)
     _aplicar(GameState.contagem, true)
-
-
-## Quantos corpos estao acesos agora. Usado pelos testes.
-func visiveis() -> int:
-    return _visiveis
 
 
 func _on_contagem_mudou(_anterior: int, novo: int) -> void:
@@ -97,10 +91,8 @@ func _process(delta: float) -> void:
         var folga := 1.0 - 0.45 * (float(i) / float(MAX_VISIVEL))
         # A perseguicao escala com a velocidade do lider: sem isso, o cordao
         # ficaria cada vez mais para tras conforme a corrida acelera.
-        var ritmo := velocidade_seguir
-        if "velocidade_frente" in _lider:
-            ritmo *= maxf(1.0, _lider.velocidade_frente / 12.0)
-        var peso := 1.0 - exp(-ritmo * folga * delta)
+        var ritmo := velocidade_seguir * maxf(1.0, Comum.velocidade(_lider) / 12.0)
+        var peso := Comum.peso(ritmo * folga, delta)
         corpo.global_position = corpo.global_position.lerp(_vaga(i), peso)
 
 
@@ -108,9 +100,7 @@ func _process(delta: float) -> void:
 func _vaga(indice: int) -> Vector3:
     var angulo := float(indice) * ANGULO_AUREO
     var raio := _espalhamento * sqrt(float(indice))
-    # Interpolada, pelo mesmo motivo da camera: ler a posicao crua faria o
-    # cordao inteiro tremer junto com o enquadramento.
-    var centro := _lider.get_global_transform_interpolated().origin
+    var centro := Comum.posicao_suave(_lider)
 
     # O grupo inteiro desliza para dentro quando o lider vai para a beirada,
     # em vez de deixar a metade de tras cair da ponte. O clamp por corpo, logo
