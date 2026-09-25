@@ -136,10 +136,15 @@ Verificado em soak de 600 portões e em 60 s de movimento real.
 # BLOCO 2 · Modelagem (D7 a D11)
 
 ## D7 · 21/09 seg · Pesquisa cultural e blockout
-- [ ] Referência do Guerreiro alagoano: personagens, indumentária, chapéu, paleta
-- [ ] Anotar 3 fontes confiáveis. O professor é local e percebe erro de folguedo
-- [ ] Decidir quais personagens entram
-- [ ] Blender: blockout do mestre, só proporção e silhueta
+- [x] Referência do Guerreiro alagoano: personagens, indumentária, chapéu, paleta
+- [x] Anotar 3 fontes confiáveis. O professor é local e percebe erro de folguedo
+- [x] Decidir quais personagens entram
+- [x] Blender: blockout do mestre, só proporção e silhueta
+
+Feito: `docs/guerreiro-referencia.md` com as fontes, e o blockout gerado por
+`tools/blockout_mestre.py` (script, não arquivo opaco: os números ficam editáveis).
+Descoberta que muda o asset: os chapéus do mestre representam **catedrais**.
+E como a câmera do jogo fica atrás, a vista de costas importa mais que a fachada.
 
 ## D8 · 22/09 ter · Mestre, indumentária
 - [ ] Chapéu ornamentado, roupa, fitas, os elementos que dão identidade
