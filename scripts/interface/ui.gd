@@ -13,6 +13,9 @@ extends CanvasLayer
 @onready var _placar_derrota: Label = $Derrota/Caixa/Mensagem
 
 var _player: Node = null
+## Todos os paineis, para mostrar um significar esconder os outros sem que
+## ninguem precise lembrar de apagar cada um na mao.
+var _paineis: Array[Control] = []
 
 
 func _ready() -> void:
@@ -21,13 +24,15 @@ func _ready() -> void:
     GameState.reiniciar()
     _player = Comum.achar(self, player_path, "ui")
 
+    _paineis = [_menu, _vitoria, _derrota]
+
     GameState.fim_de_jogo.connect(_on_derrota)
     GameState.vitoria.connect(_on_vitoria)
 
     $Menu/Caixa/BotaoTeclado.pressed.connect(_comecar.bind(0))
     $Menu/Caixa/BotaoMouse.pressed.connect(_comecar.bind(1))
-    $Vitoria/Caixa/BotaoReiniciar.pressed.connect(_reiniciar)
-    $Derrota/Caixa/BotaoReiniciar.pressed.connect(_reiniciar)
+    for painel in [_vitoria, _derrota]:
+        painel.get_node("Caixa/BotaoReiniciar").pressed.connect(_reiniciar)
 
     _mostrar(_menu)
     $Menu/Caixa/BotaoTeclado.grab_focus()
@@ -36,15 +41,19 @@ func _ready() -> void:
 func _unhandled_input(evento: InputEvent) -> void:
     if not evento.is_action_pressed(&"ui_accept"):
         return
-    if _vitoria.visible or _derrota.visible:
+    if _fim_aberto():
         _reiniciar()
+
+
+## Um painel de fim de partida esta na tela.
+func _fim_aberto() -> bool:
+    return _vitoria.visible or _derrota.visible
 
 
 ## Mostra um painel e pausa a partida. `nulo` volta ao jogo.
 func _mostrar(painel: Control) -> void:
-    _menu.visible = painel == _menu
-    _vitoria.visible = painel == _vitoria
-    _derrota.visible = painel == _derrota
+    for outro in _paineis:
+        outro.visible = outro == painel
 
     var pausado := painel != null
     get_tree().paused = pausado

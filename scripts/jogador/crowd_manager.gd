@@ -69,12 +69,13 @@ func _aplicar(contagem: int, instantaneo: bool) -> void:
     # corpo, entao encolher abaixo disso volta a sobrepor os guerreiros.
     _espalhamento = espalhamento_base * clampf(escala, 1.0, 1.25)
 
+    var centro := _centro_da_formacao()
     for i in MAX_VISIVEL:
         var corpo := _corpos[i]
         var deve_aparecer := i < _visiveis
         if deve_aparecer and not corpo.visible:
             corpo.visible = true
-            corpo.global_position = _vaga(i)
+            corpo.global_position = _vaga(i, centro)
             if not instantaneo:
                 _surgir(corpo)
         elif not deve_aparecer and corpo.visible:
@@ -84,34 +85,46 @@ func _aplicar(contagem: int, instantaneo: bool) -> void:
 func _process(delta: float) -> void:
     if _lider == null:
         return
+
+    # Centro e ritmo sao iguais para os 25 corpos neste quadro, entao ficam
+    # fora do laco. Dentro dele, eram 25 calculos identicos por quadro.
+    var centro := _centro_da_formacao()
+    # A perseguicao escala com a velocidade do lider: sem isso, o cordao
+    # ficaria cada vez mais para tras conforme a corrida acelera.
+    var ritmo := velocidade_seguir * maxf(1.0, Comum.velocidade(_lider) / 12.0)
+
     for i in _visiveis:
         var corpo := _corpos[i]
         # Quem esta mais atras na formacao persegue mais devagar, o que da
         # elasticidade ao grupo em vez de um bloco rigido preso ao lider.
-        var folga := 1.0 - 0.45 * (float(i) / float(MAX_VISIVEL))
-        # A perseguicao escala com a velocidade do lider: sem isso, o cordao
-        # ficaria cada vez mais para tras conforme a corrida acelera.
-        var ritmo := velocidade_seguir * maxf(1.0, Comum.velocidade(_lider) / 12.0)
-        var peso := Comum.peso(ritmo * folga, delta)
-        corpo.global_position = corpo.global_position.lerp(_vaga(i), peso)
+        var atraso := 1.0 - 0.45 * (float(i) / float(MAX_VISIVEL))
+        var peso := Comum.peso(ritmo * atraso, delta)
+        corpo.global_position = corpo.global_position.lerp(_vaga(i, centro), peso)
 
 
-## Posicao da vaga `i` na formacao, em coordenadas globais.
-func _vaga(indice: int) -> Vector3:
+## Onde o grupo inteiro esta centrado, ja trazido para dentro da ponte.
+##
+## Quando o lider vai para a beirada, o cordao desliza para dentro em vez de
+## deixar a metade de tras cair da pista.
+func _centro_da_formacao() -> Vector3:
+    var centro := Comum.posicao_suave(_lider)
+    var raio_maximo := _espalhamento * sqrt(float(MAX_VISIVEL - 1))
+    var margem := maxf(meia_largura_util - raio_maximo, 0.0)
+    centro.x = clampf(centro.x, -margem, margem)
+    return centro
+
+
+## Posicao da vaga `indice` dentro da formacao, em coordenadas globais.
+##
+## Recebe o centro pronto em vez de calcula-lo: ele e o mesmo para os 25
+## corpos, e esta funcao e chamada uma vez por corpo por quadro.
+func _vaga(indice: int, centro: Vector3) -> Vector3:
     var angulo := float(indice) * ANGULO_AUREO
     var raio := _espalhamento * sqrt(float(indice))
-    var centro := Comum.posicao_suave(_lider)
-
-    # O grupo inteiro desliza para dentro quando o lider vai para a beirada,
-    # em vez de deixar a metade de tras cair da ponte. O clamp por corpo, logo
-    # abaixo, e so a rede de seguranca para o caso de a formacao ser mais larga
-    # que a propria pista.
-    var raio_maximo := _espalhamento * sqrt(float(MAX_VISIVEL - 1))
-    var folga := maxf(meia_largura_util - raio_maximo, 0.0)
-    var centro_x := clampf(centro.x, -folga, folga)
-
     return Vector3(
-        clampf(centro_x + cos(angulo) * raio, -meia_largura_util, meia_largura_util),
+        # O clamp por corpo e rede de seguranca, para o caso de a formacao
+        # ficar mais larga que a propria pista.
+        clampf(centro.x + cos(angulo) * raio, -meia_largura_util, meia_largura_util),
         altura,
         centro.z + sin(angulo) * raio + recuo
     )
