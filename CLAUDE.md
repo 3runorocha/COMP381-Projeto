@@ -98,7 +98,16 @@ jogador, o que e invisivel porque a pista nao tem textura.
 - **Os pares a frente sao decididos contra o CONJUNTO de contagens possiveis**,
   nao contra um numero, porque o jogador ainda vai escolher lados antes de
   chegar neles. Para a divisao fechar exata em qualquer caminho, o divisor
-  precisa dividir o MDC do conjunto.
+  precisa dividir o MDC do conjunto. Isso vive em `ContagensPossiveis`.
+- **Todo par tem um lado PROPORCIONAL e um lado FIXO.** Proporcional multiplica
+  ou divide, fixo soma ou subtrai um tanto. A mecanica inteira cabe numa frase
+  com esses nomes: qual dos dois vence depende de quantos guerreiros o jogador
+  tem, e e por isso que ele precisa contar em vez de decorar um lado.
+- **A margem real fica abaixo do alvo.** Medido em 600 portoes, a mediana da
+  margem NA CHEGADA e 1.18, nao 1.20 a 1.40, e 275 de 592 caem fora da faixa.
+  A causa e a distancia entre decisao e chegada: o portao e calibrado contra a
+  media do conjunto possivel, e ate o jogador chegar a contagem real ja se
+  afastou dela. Quanto maior o lookahead, pior a deriva.
 - **Exatidao da divisao e exigencia; paridade da contagem nao.** Exigir que o
   resultado da divisao tambem fosse par derrubou a divisao para 16 aparicoes em
   600 portoes e degenerou o par negativo em duas subtracoes. A paridade virou
@@ -180,6 +189,7 @@ scripts/jogador/ e scenes/jogador/
 
 scripts/pista/ e scenes/pista/
   level_generator.gd      gera e recicla os pares, decide os valores
+  contagens_possiveis.gd  o conjunto de contagens que o jogador pode ter
   gate.gd  gate_pair.gd   um portao, e o par exclusivo
   ground_follow.gd        chao infinito
   finish_line.gd          so usada em modo fase

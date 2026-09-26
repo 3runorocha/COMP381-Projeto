@@ -42,7 +42,7 @@ const CONTAGEM_ALTA: int = 400
 
 var _player: Node3D = null
 var _fila: Array[Node3D] = []
-var _possiveis: Array[int] = []
+var _possiveis := ContagensPossiveis.new()
 var _z_frente: float = 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -55,7 +55,7 @@ func _ready() -> void:
         return
 
     _configurar_chegada()
-    _possiveis = [GameState.contagem]
+    _possiveis.definir(GameState.contagem)
     _z_frente = _player.global_position.z
 
     for i in pares_ativos:
@@ -125,64 +125,92 @@ func _tempo_leitura() -> float:
 
 
 func _decidir(par: Node3D) -> void:
-    var base := _media(_possiveis)
-    var mdc := _mdc_lista(_possiveis)
-    var menor := _minimo(_possiveis)
     var margem := _rng.randf_range(MARGEM_MIN, MARGEM_MAX)
-    # Quem vence alterna de proposito. Se a multiplicacao ganhasse sempre, o
-    # jogador decora "pega o x" em tres portoes e para de calcular.
-    var vence_o_simples := _rng.randf() < 0.5
+    # Quem vence alterna de proposito. Se o mesmo lado ganhasse sempre, o
+    # jogador decora em tres portoes e para de calcular.
+    var fixo_vence := _rng.randf() < 0.5
+    var lados := _sortear_lados(margem, fixo_vence)
 
-    var op_forte: Estado.Op
-    var val_forte: int
-    var op_simples: Estado.Op
-    var val_simples: int
-
-    var positivo := _sortear_positivo(base)
-    var divisor := -1
-    if not positivo:
-        divisor = _divisor_exato(mdc)
-        # Sem divisor exato, um par negativo vira duas subtracoes, que e o
-        # formato mais sem graca possivel. Melhor trocar por um par positivo,
-        # a menos que a contagem esteja alta e precise mesmo ser drenada.
-        if divisor <= 0 and base <= float(CONTAGEM_ALTA):
-            positivo = true
-
-    if positivo:
-        var m: int = MULTIPLICADORES[_rng.randi() % MULTIPLICADORES.size()]
-        var empate := base * float(m - 1)
-        op_forte = Estado.Op.MULTIPLICAR
-        val_forte = m
-        op_simples = Estado.Op.SOMAR
-        val_simples = _valor_par(empate * margem if vence_o_simples else empate / margem, 2)
-    else:
-        var d := divisor
-        if d > 0:
-            # A divisao e o lado seguro: com 2d dividindo a contagem, o
-            # resultado nunca desce de 2. Quem pode matar e a subtracao.
-            var empate := base * float(d - 1) / float(d)
-            op_forte = Estado.Op.DIVIDIR
-            val_forte = d
-            op_simples = Estado.Op.SUBTRAIR
-            val_simples = _valor_par(empate / margem if vence_o_simples else empate * margem, 2)
-        else:
-            # Nenhum divisor fecha exato. Dois lados de subtracao ainda formam
-            # um par de mesmo sinal, so e menos interessante.
-            var leve := base * 0.3
-            op_forte = Estado.Op.SUBTRAIR
-            val_forte = _valor_par(leve * margem, 2)
-            op_simples = Estado.Op.SUBTRAIR
-            val_simples = _valor_par(leve, 2)
-            # Com os dois lados subtraindo, o lado leve precisa deixar
-            # sobrevivencia, senao a morte vira inevitavel em vez de escolha.
-            val_simples = mini(val_simples, maxi(menor - 2, 2))
-
+    # De que lado da pista cada um fica tambem e sorteado, senao o jogador
+    # aprende a posicao em vez de aprender a conta.
     if _rng.randf() < 0.5:
-        par.configurar(op_forte, val_forte, op_simples, val_simples)
+        par.configurar(lados[0], lados[1], lados[2], lados[3])
     else:
-        par.configurar(op_simples, val_simples, op_forte, val_forte)
+        par.configurar(lados[2], lados[3], lados[0], lados[1])
 
-    _possiveis = _aplicar_par(_possiveis, par.operacoes())
+    _possiveis.avancar(par.operacoes())
+
+
+## Escolhe o tipo de par e devolve [op proporcional, valor, op fixa, valor].
+##
+## Todo par tem um lado PROPORCIONAL, que multiplica ou divide, e um lado FIXO,
+## que soma ou subtrai um tanto. A mecanica inteira do jogo cabe numa frase com
+## esses dois nomes: qual dos dois lados vence depende de quantos guerreiros o
+## jogador tem naquele momento, e e por isso que ele precisa fazer a conta em
+## vez de decorar um lado.
+func _sortear_lados(margem: float, fixo_vence: bool) -> Array:
+    var base := _possiveis.media()
+
+    if _sortear_positivo(base):
+        return _par_positivo(base, margem, fixo_vence)
+
+    var divisor := _divisor_exato(_possiveis.mdc())
+    if divisor > 0:
+        return _par_com_divisao(base, divisor, margem, fixo_vence)
+
+    # Sem divisor exato o par negativo viraria duas subtracoes, que e o formato
+    # mais sem graca possivel. Com a contagem ainda administravel, vale mais
+    # trocar por um par positivo.
+    if base <= float(CONTAGEM_ALTA):
+        return _par_positivo(base, margem, fixo_vence)
+    return _par_de_subtracoes(base, margem)
+
+
+## Multiplicar contra somar. Os dois lados empatam quando s = N x (m - 1).
+func _par_positivo(base: float, margem: float, fixo_vence: bool) -> Array:
+    var m: int = MULTIPLICADORES[_rng.randi() % MULTIPLICADORES.size()]
+    var empate := base * float(m - 1)
+    return [
+        Estado.Op.MULTIPLICAR, m,
+        Estado.Op.SOMAR, _calibrar(empate, margem, fixo_vence, true),
+    ]
+
+
+## Dividir contra subtrair. Os dois lados empatam quando s = N x (d - 1) / d.
+##
+## Aqui a divisao e o lado seguro: sendo exata, o resultado nunca chega a zero.
+## Quem pode matar o jogador e a subtracao.
+func _par_com_divisao(base: float, divisor: int, margem: float, fixo_vence: bool) -> Array:
+    var empate := base * float(divisor - 1) / float(divisor)
+    return [
+        Estado.Op.DIVIDIR, divisor,
+        Estado.Op.SUBTRAIR, _calibrar(empate, margem, fixo_vence, false),
+    ]
+
+
+## Ultimo recurso: dois lados de subtracao.
+##
+## So acontece quando nenhum divisor fecha exato E a contagem esta alta demais
+## para um par positivo, ou seja, quando o cordao precisa mesmo ser drenado.
+func _par_de_subtracoes(base: float, margem: float) -> Array:
+    var leve := base * 0.3
+    # O lado mais leve precisa deixar sobrevivencia, senao a morte vira
+    # inevitavel em vez de escolha.
+    var sobra := maxi(_possiveis.minimo() - 2, 2)
+    return [
+        Estado.Op.SUBTRAIR, _valor_par(leve * margem, 2),
+        Estado.Op.SUBTRAIR, mini(_valor_par(leve, 2), sobra),
+    ]
+
+
+## Valor do lado fixo, calculado a partir do ponto de empate.
+##
+## Uma funcao so atende soma e subtracao porque a unica diferenca entre elas e
+## o sentido: somando, numero maior e melhor; subtraindo, menor e melhor. Duas
+## funcoes quase identicas seriam mais codigo para dizer a mesma coisa.
+func _calibrar(empate: float, margem: float, deve_vencer: bool, maior_e_melhor: bool) -> int:
+    var fator := margem if deve_vencer == maior_e_melhor else 1.0 / margem
+    return _valor_par(empate * fator, 2)
 
 
 func _sortear_positivo(base: float) -> bool:
@@ -225,61 +253,14 @@ func _valor_par(x: float, minimo: int) -> int:
     return maxi(v, minimo)
 
 
+
+## Refaz o conjunto de contagens possiveis a partir da contagem real de agora,
+## simulando os pares que ainda estao a frente.
 func _recalcular_possiveis() -> void:
-    var conjunto: Array[int] = [GameState.contagem]
+    _possiveis.definir(GameState.contagem)
     for par in _fila:
-        conjunto = _aplicar_par(conjunto, par.operacoes())
-    _possiveis = conjunto
+        _possiveis.avancar(par.operacoes())
 
-
-func _aplicar_par(conjunto: Array[int], operacoes: Array) -> Array[int]:
-    var saida: Array[int] = []
-    for n in conjunto:
-        for lado in operacoes:
-            var r: int = Estado.resultado(lado[0], lado[1], n)
-            # Caminho que mata nao precisa ser planejado adiante.
-            if r > 0 and not saida.has(r):
-                saida.append(r)
-    if saida.is_empty():
-        saida.append(Estado.CONTAGEM_INICIAL)
-    return saida
-
-
-func _media(lista: Array[int]) -> float:
-    if lista.is_empty():
-        return float(Estado.CONTAGEM_INICIAL)
-    var soma := 0
-    for n in lista:
-        soma += n
-    return float(soma) / float(lista.size())
-
-
-func _minimo(lista: Array[int]) -> int:
-    if lista.is_empty():
-        return Estado.CONTAGEM_INICIAL
-    var menor: int = lista[0]
-    for n in lista:
-        menor = mini(menor, n)
-    return menor
-
-
-func _mdc_lista(lista: Array[int]) -> int:
-    if lista.is_empty():
-        return 0
-    var g: int = lista[0]
-    for n in lista:
-        g = _mdc(g, n)
-    return g
-
-
-func _mdc(a: int, b: int) -> int:
-    a = absi(a)
-    b = absi(b)
-    while b != 0:
-        var t := b
-        b = a % b
-        a = t
-    return a
 
 
 ## Com distancia_final maior que zero o jogo volta a ter fim, para comparar com
