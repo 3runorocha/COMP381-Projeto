@@ -28,17 +28,17 @@ import os
 # acrescenta quase um metro de proposito: as fontes descrevem os chapeus como
 # gigantes, e e ele que faz o personagem ser reconhecivel de longe.
 
-ALTURA_CORPO = 1.80
-TOPO_CABECA = 1.90
+ALTURA_CORPO = 1.82
+TOPO_CABECA = 1.82
 BASE_CHAPEU = TOPO_CABECA
 
+# Azul, branco e vermelho: as cores da bandeira de Alagoas. Roupa, capacete e
+# fitas ficam restritos a elas. Pele fica de fora, nao e roupa.
 CORES = {
-    "pele": (0.76, 0.57, 0.44, 1.0),
-    "roupa": (0.78, 0.16, 0.18, 1.0),
-    "meia": (0.94, 0.94, 0.92, 1.0),
-    "chapeu": (0.16, 0.34, 0.68, 1.0),
-    "dourado": (0.90, 0.72, 0.22, 1.0),
-    "manto": (0.20, 0.52, 0.34, 1.0),
+    "pele": (0.62, 0.42, 0.29, 1.0),
+    "vermelho": (0.80, 0.14, 0.16, 1.0),
+    "azul": (0.13, 0.33, 0.66, 1.0),
+    "branco": (0.95, 0.95, 0.93, 1.0),
 }
 
 _materiais = {}
@@ -92,70 +92,86 @@ def limpar_cena():
 
 
 def construir_corpo():
-    """Calcoes curtos e meias brancas longas, como as fontes descrevem."""
-    # Pernas mais grossas e mais juntas que na primeira versao: finas e
-    # afastadas liam como palito, e o personagem parecia quebra-nozes.
-    for lado, x in (("esq", -0.115), ("dir", 0.115)):
-        cilindro("meia_" + lado, (x, 0.0, 0.36), 0.10, 0.72, "meia")
-        caixa("sapato_" + lado, (x, -0.05, 0.035), (0.18, 0.28, 0.07), "dourado")
+    """Proporcao chibi, como na referencia: cabeca grande, pernas curtas.
 
-    caixa("calcao", (0.0, 0.0, 0.85), (0.44, 0.32, 0.30), "roupa")
-    caixa("torso", (0.0, 0.0, 1.24), (0.46, 0.30, 0.48), "roupa")
+    Roupa em uma cor so por peca, sem galao, botao nem cinto. Detalhe de
+    indumentaria nao cabe num personagem que o jogador ve de longe e por tras.
+    """
+    # Duas pernas separadas de verdade. Antes eu punha uma caixa branca no meio
+    # para "abrir" o vao, mas caixa soma geometria em vez de subtrair, e o
+    # resultado era uma mancha branca pintada na calca.
+    for lado, x in (("esq", -0.12), ("dir", 0.12)):
+        caixa("bota_" + lado, (x, -0.03, 0.09), (0.21, 0.30, 0.18), "vermelho")
+        caixa("perna_" + lado, (x, 0.0, 0.46), (0.19, 0.24, 0.56), "azul")
 
-    # Ombro explicito: sem ele os bracos pareciam tubos soltos ao lado.
-    caixa("ombros", (0.0, 0.0, 1.44), (0.64, 0.30, 0.13), "roupa")
+    caixa("camisa", (0.0, 0.0, 0.99), (0.52, 0.30, 0.54), "vermelho")
+    caixa("ombros", (0.0, 0.0, 1.20), (0.64, 0.30, 0.14), "vermelho")
 
-    # Guarda-peito: peca citada nas fontes, fica sobre o peito.
-    caixa("guarda_peito", (0.0, -0.17, 1.26), (0.44, 0.07, 0.34), "dourado")
+    # Braco esquerdo dobrado na cintura, direito solto: e a pose da referencia,
+    # sem a espada, e ja quebra a simetria do boneco.
+    caixa("braco_esq_alto", (-0.36, 0.0, 1.08), (0.14, 0.16, 0.30), "vermelho")
+    caixa("braco_esq_baixo", (-0.27, 0.0, 0.90), (0.22, 0.16, 0.14), "vermelho")
+    caixa("mao_esq", (-0.17, 0.0, 0.90), (0.11, 0.14, 0.14), "pele")
 
-    for lado, x in (("esq", -0.29), ("dir", 0.29)):
-        cilindro("braco_" + lado, (x, 0.0, 1.20), 0.085, 0.44, "roupa")
+    caixa("braco_dir", (0.36, 0.0, 1.02), (0.14, 0.16, 0.44), "vermelho")
+    caixa("mao_dir", (0.36, 0.0, 0.76), (0.13, 0.15, 0.13), "pele")
 
-    caixa("pescoco", (0.0, 0.0, 1.53), (0.17, 0.17, 0.09), "pele")
-    # Cabeca maior: personagem de jogo le melhor com cabeca grande, e antes ela
-    # sumia entre o torso e a aba do chapeu.
-    caixa("cabeca", (0.0, 0.0, 1.73), (0.31, 0.29, 0.31), "pele")
-
-    # Manto nas costas. E ele que o jogador ve a maior parte do tempo, porque a
-    # camera do jogo fica atras.
-    caixa("manto", (0.0, 0.20, 1.16), (0.60, 0.06, 0.80), "manto")
+    caixa("pescoco", (0.0, 0.0, 1.29), (0.17, 0.17, 0.08), "pele")
+    # Cabeca grande de proposito: e o que da a leitura chibi da referencia, e o
+    # que sustenta um capacete deste tamanho sem parecer alfinete.
+    caixa("cabeca", (0.0, 0.0, 1.57), (0.50, 0.44, 0.50), "pele")
 
 
-def construir_chapeu_catedral():
-    """Chapeu em forma de catedral: a marca do mestre.
+def construir_capacete():
+    """Capacete em forma de catedral, SO O FORMATO.
 
-    Fachada com rosacea na frente, abside arredondada atras, duas torres com
-    pinaculos. A abside existe porque no jogo a camera fica ATRAS do jogador:
-    sem ela, a silhueta que o jogador mais ve seria uma caixa lisa.
+    Sem rosacea, sem bolinha, sem imagem de santo. A referencia tem tudo isso,
+    mas detalhe some na distancia de camera do jogo e custa poligono a toa. O
+    que identifica o mestre de longe sao as tres torres e a cruz.
     """
     base = BASE_CHAPEU
 
-    caixa("chapeu_aba", (0.0, 0.0, base + 0.05), (0.50, 0.44, 0.10), "dourado")
-    caixa("chapeu_nave", (0.0, 0.02, base + 0.36), (0.32, 0.30, 0.52), "chapeu")
+    caixa("aro", (0.0, 0.0, base + 0.06), (0.58, 0.50, 0.12), "branco")
+    caixa("corpo_capacete", (0.0, 0.0, base + 0.27), (0.52, 0.42, 0.30), "branco")
 
-    # Fachada, virada para a frente.
-    caixa("chapeu_fachada", (0.0, -0.14, base + 0.42), (0.36, 0.06, 0.64), "chapeu")
-    rosacea = cilindro("chapeu_rosacea", (0.0, -0.18, base + 0.48), 0.08, 0.03, "dourado")
-    rosacea.rotation_euler = (math.radians(90.0), 0.0, 0.0)
+    for lado, x in (("esq", -0.19), ("dir", 0.19)):
+        caixa("torre_" + lado, (x, 0.0, base + 0.59), (0.15, 0.20, 0.34), "branco")
+        cone("telhado_" + lado, (x, 0.0, base + 0.85), 0.115, 0.20, "vermelho")
 
-    # Abside: a traseira arredondada, que e a vista de jogo.
-    abside = cilindro("chapeu_abside", (0.0, 0.17, base + 0.34), 0.16, 0.46, "chapeu")
-    caixa("contraforte_esq", (-0.13, 0.20, base + 0.26), (0.06, 0.20, 0.34), "dourado")
-    caixa("contraforte_dir", (0.13, 0.20, base + 0.26), (0.06, 0.20, 0.34), "dourado")
+    caixa("torre_centro", (0.0, 0.0, base + 0.65), (0.20, 0.24, 0.46), "branco")
+    cone("telhado_centro", (0.0, 0.0, base + 0.99), 0.145, 0.22, "vermelho")
+    caixa("cruz_haste", (0.0, 0.0, base + 1.19), (0.035, 0.035, 0.20), "vermelho")
+    caixa("cruz_braco", (0.0, 0.0, base + 1.22), (0.14, 0.035, 0.035), "vermelho")
 
-    for lado, x in (("esq", -0.17), ("dir", 0.17)):
-        caixa("torre_" + lado, (x, -0.06, base + 0.46), (0.13, 0.15, 0.76), "chapeu")
-        cone("pinaculo_" + lado, (x, -0.06, base + 0.96), 0.09, 0.26, "dourado")
 
-    caixa("cruz_haste", (0.0, 0.02, base + 0.74), (0.04, 0.04, 0.26), "dourado")
-    caixa("cruz_braco", (0.0, 0.02, base + 0.81), (0.17, 0.04, 0.04), "dourado")
+def construir_fitas():
+    """Fitas caindo do capacete, ate abaixo da cintura.
+
+    Nao sao enfeite: a camera do jogo fica ATRAS do jogador, entao sao elas,
+    junto com o capacete, que formam quase toda a silhueta que ele ve o tempo
+    inteiro. Alternam as tres cores da bandeira.
+    """
+    topo = BASE_CHAPEU + 0.02
+    cores = ("azul", "branco", "vermelho")
+    for lado, sinal in (("esq", -1.0), ("dir", 1.0)):
+        for i in range(3):
+            # Por FORA do ombro (0.32) e atras do torso (0.15). Na primeira
+            # tentativa elas ficavam em x = 0.24 e y = 0.13, ou seja, dentro do
+            # corpo, e sumiam atras dele.
+            x = sinal * (0.30 + i * 0.075)
+            comprimento = 1.02 - i * 0.10
+            centro_z = topo - comprimento * 0.5
+            caixa("fita_%s_%d" % (lado, i),
+                  (x, 0.20 + i * 0.025, centro_z),
+                  (0.07, 0.02, comprimento),
+                  cores[i])
 
 
 def juntar_e_exportar():
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 
-    corpo = bpy.data.objects.get("torso")
+    corpo = bpy.data.objects.get("camisa")
     bpy.context.view_layer.objects.active = corpo
     bpy.ops.object.join()
 
@@ -186,5 +202,6 @@ def juntar_e_exportar():
 
 limpar_cena()
 construir_corpo()
-construir_chapeu_catedral()
+construir_capacete()
+construir_fitas()
 juntar_e_exportar()

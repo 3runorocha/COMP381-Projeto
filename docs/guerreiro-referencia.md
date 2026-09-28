@@ -73,6 +73,25 @@ Multicolorido e vibrante, com brilho: espelhos e enfeites natalinos. Não há um
 paleta canônica fechada nas fontes consultadas; vermelho, azul, amarelo e branco
 aparecem nas descrições e nas fotos.
 
+## Simplificações decididas por Bruno (27/09/2026)
+
+A partir de uma ilustração de referência do mestre, com capacete de catedral,
+fitas coloridas, farda vermelha e calça verde:
+
+- **Camisa e calça em uma cor só cada**, sem galão, botão, punho nem cinto.
+- **Capacete só no formato**, sem rosácea, bolinha nem imagem de santo. O que
+  identifica o mestre de longe são as três torres e a cruz.
+- **Sem espada.**
+- **Paleta restrita às cores da bandeira de Alagoas**: azul, branco e vermelho.
+  Camisa e botas vermelhas, calça azul, capacete branco com telhados vermelhos,
+  fitas alternando as três. Pele fica fora da regra, não é roupa.
+- **Proporção chibi**: cabeça grande, pernas curtas, como na ilustração. O
+  capacete sozinho é cerca de 40% da altura total.
+- **As fitas são elemento principal, não enfeite.** A câmera do jogo fica atrás
+  do jogador, então são elas mais o capacete que formam quase toda a silhueta
+  que ele vê o tempo inteiro. Precisam cair por FORA do ombro e atrás do torso,
+  senão somem dentro do corpo.
+
 ## Decisões para o jogo
 
 - **Mestre** é o asset herói, em primeiro plano, com o chapéu de catedral.

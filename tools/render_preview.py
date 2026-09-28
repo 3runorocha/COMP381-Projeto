@@ -20,7 +20,7 @@ bpy.ops.wm.open_mainfile(filepath=BLEND)
 
 alvo = bpy.data.objects.new("Alvo", None)
 bpy.context.scene.collection.objects.link(alvo)
-alvo.location = (0.0, 0.0, 1.45)
+alvo.location = (0.0, 0.0, 1.55)
 
 bpy.ops.object.camera_add(location=(0.0, 0.0, 0.0))
 camera = bpy.context.active_object
@@ -41,7 +41,7 @@ sombreado = cena.display.shading
 sombreado.light = "STUDIO"
 sombreado.color_type = "MATERIAL"
 sombreado.show_shadows = True
-sombreado.show_cavity = True
+sombreado.show_cavity = False
 
 cena.world.color = (0.86, 0.87, 0.90)
 
