@@ -151,36 +151,60 @@ def construir_fitas():
     junto com o capacete, que formam quase toda a silhueta que ele ve o tempo
     inteiro.
 
-    Ficam agrupadas atras da cabeca, quase encostando umas nas outras, e nao
-    abertas para os lados: juntas elas leem como uma massa de cabelo, separadas
-    leem como seis pauzinhos soltos.
+    Ficam agrupadas atras da cabeca, com folga visivel entre uma e outra, e nao
+    abertas para os lados.
+
+    Cada fita sai daqui como objeto SEPARADO, com o pivo no topo, onde ela
+    encosta no capacete. E isso que permite balanca-las no jogo: numa malha
+    unica nao haveria o que animar, e girar a partir do meio faria a ponta de
+    cima furar o capacete.
     """
     topo = BASE_CHAPEU + 0.02
     cores = ("azul", "branco", "vermelho")
-    # Atras da cabeca, que tem 0.44 de profundidade e termina em y = 0.22.
     recuo = 0.25
-    # Comprimentos levemente diferentes, simetricos, para a ponta nao ficar uma
-    # linha reta de regua.
+    largura = 0.05
+    passo = 0.088  # folga de 0.038 entre fitas vizinhas
     comprimentos = (1.00, 0.92, 0.98, 0.98, 0.92, 1.00)
+
+    fitas = []
     for i in range(6):
-        x = -0.20 + i * 0.08
+        x = -0.22 + i * passo
         comprimento = comprimentos[i]
-        caixa("fita_%d" % i,
-              (x, recuo, topo - comprimento * 0.5),
-              (0.075, 0.02, comprimento),
-              cores[i % 3])
+        fita = caixa("fita_%d" % i,
+                     (x, recuo, topo - comprimento * 0.5),
+                     (largura, 0.02, comprimento),
+                     cores[i % 3])
+        fitas.append((fita, x, topo))
+    return fitas
+
+
+## Move o pivo de cada fita para o topo dela, onde encosta no capacete.
+def pivo_no_topo(fitas):
+    for fita, x, topo in fitas:
+        bpy.context.scene.cursor.location = (x, 0.25, topo)
+        bpy.ops.object.select_all(action="DESELECT")
+        fita.select_set(True)
+        bpy.context.view_layer.objects.active = fita
+        bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
+    bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
 
 
 def juntar_e_exportar():
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 
+    # Junta corpo e capacete numa malha so, mas deixa as fitas de fora: elas
+    # precisam continuar sendo nos separados para o Godot poder balanca-las.
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in bpy.data.objects:
+        if obj.type == "MESH" and not obj.name.startswith("fita_"):
+            obj.select_set(True)
     corpo = bpy.data.objects.get("camisa")
     bpy.context.view_layer.objects.active = corpo
     bpy.ops.object.join()
 
     mestre = bpy.context.active_object
-    mestre.name = "MestreBlockout"
+    mestre.name = "Mestre"
 
     # Origem nos pes, em z = 0: e o que faz o modelo assentar no chao do Godot
     # sem ninguem ter que adivinhar deslocamento.
@@ -207,5 +231,5 @@ def juntar_e_exportar():
 limpar_cena()
 construir_corpo()
 construir_capacete()
-construir_fitas()
+pivo_no_topo(construir_fitas())
 juntar_e_exportar()
