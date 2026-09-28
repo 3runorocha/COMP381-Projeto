@@ -145,26 +145,30 @@ def construir_capacete():
 
 
 def construir_fitas():
-    """Fitas caindo do capacete, ate abaixo da cintura.
+    """Fitas caindo atras da cabeca, lendo como cabelo.
 
     Nao sao enfeite: a camera do jogo fica ATRAS do jogador, entao sao elas,
     junto com o capacete, que formam quase toda a silhueta que ele ve o tempo
-    inteiro. Alternam as tres cores da bandeira.
+    inteiro.
+
+    Ficam agrupadas atras da cabeca, quase encostando umas nas outras, e nao
+    abertas para os lados: juntas elas leem como uma massa de cabelo, separadas
+    leem como seis pauzinhos soltos.
     """
     topo = BASE_CHAPEU + 0.02
     cores = ("azul", "branco", "vermelho")
-    for lado, sinal in (("esq", -1.0), ("dir", 1.0)):
-        for i in range(3):
-            # Por FORA do ombro (0.32) e atras do torso (0.15). Na primeira
-            # tentativa elas ficavam em x = 0.24 e y = 0.13, ou seja, dentro do
-            # corpo, e sumiam atras dele.
-            x = sinal * (0.30 + i * 0.075)
-            comprimento = 1.02 - i * 0.10
-            centro_z = topo - comprimento * 0.5
-            caixa("fita_%s_%d" % (lado, i),
-                  (x, 0.20 + i * 0.025, centro_z),
-                  (0.07, 0.02, comprimento),
-                  cores[i])
+    # Atras da cabeca, que tem 0.44 de profundidade e termina em y = 0.22.
+    recuo = 0.25
+    # Comprimentos levemente diferentes, simetricos, para a ponta nao ficar uma
+    # linha reta de regua.
+    comprimentos = (1.00, 0.92, 0.98, 0.98, 0.92, 1.00)
+    for i in range(6):
+        x = -0.20 + i * 0.08
+        comprimento = comprimentos[i]
+        caixa("fita_%d" % i,
+              (x, recuo, topo - comprimento * 0.5),
+              (0.075, 0.02, comprimento),
+              cores[i % 3])
 
 
 def juntar_e_exportar():

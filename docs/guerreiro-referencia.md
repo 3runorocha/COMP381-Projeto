@@ -89,8 +89,10 @@ fitas coloridas, farda vermelha e calça verde:
   capacete sozinho é cerca de 40% da altura total.
 - **As fitas são elemento principal, não enfeite.** A câmera do jogo fica atrás
   do jogador, então são elas mais o capacete que formam quase toda a silhueta
-  que ele vê o tempo inteiro. Precisam cair por FORA do ombro e atrás do torso,
-  senão somem dentro do corpo.
+  que ele vê o tempo inteiro.
+- **As fitas caem atrás da cabeça, agrupadas, lendo como cabelo.** Não abertas
+  para os lados: juntas elas leem como uma massa, separadas leem como pauzinhos
+  soltos. Precisam ficar atrás do corpo, senão somem dentro dele.
 
 ## Decisões para o jogo
 
