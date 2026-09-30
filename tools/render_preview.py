@@ -48,8 +48,8 @@ cena.world.color = (0.86, 0.87, 0.90)
 # Duas vistas. A de costas importa mais que a de frente: e a que o jogador ve,
 # porque a camera do jogo fica atras do personagem.
 VISTAS = (
-    ("frente", (3.0, -4.6, 2.6)),
-    ("costas", (2.2, 4.8, 2.8)),
+    ("costas", (3.0, -4.6, 2.6)),
+    ("frente", (2.2, 4.8, 2.8)),
 )
 
 for nome, posicao in VISTAS:

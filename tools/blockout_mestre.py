@@ -203,11 +203,34 @@ def juntar_e_exportar():
     bpy.context.view_layer.objects.active = corpo
     bpy.ops.object.join()
 
+
+    # Gira tudo 180 graus em torno da origem do mundo, e APLICA.
+    #
+    # O exportador glTF manda o +Y do Blender para o -Z do Godot. Como o jogo
+    # corre para -Z, o que foi construido como costas chegava virado para a
+    # frente: o jogador via a cara do boneco e as fitas ficavam do outro lado.
+    #
+    # Aplicar a rotacao e essencial, nao cosmetico: as fitas sao animadas por
+    # script, que ESCREVE em rotation. Se a volta de 180 ficasse guardada ali,
+    # o primeiro quadro de animacao a apagaria.
+    bpy.ops.object.select_all(action="SELECT")
+    bpy.ops.transform.rotate(value=math.pi, orient_axis="Z",
+                             center_override=(0.0, 0.0, 0.0))
+    bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+
     mestre = bpy.context.active_object
     mestre.name = "Mestre"
 
     # Origem nos pes, em z = 0: e o que faz o modelo assentar no chao do Godot
     # sem ninguem ter que adivinhar deslocamento.
+    #
+    # Selecionar SO o corpo antes disto e obrigatorio. origin_set vale para
+    # tudo que estiver selecionado, e o giro logo acima seleciona a cena
+    # inteira: sem esta linha ele jogaria o pivo das seis fitas para a origem
+    # do mundo, e elas passariam a girar a partir dos pes do boneco.
+    bpy.ops.object.select_all(action="DESELECT")
+    mestre.select_set(True)
+    bpy.context.view_layer.objects.active = mestre
     bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
     bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
 
