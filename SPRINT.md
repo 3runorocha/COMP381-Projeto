@@ -178,8 +178,9 @@ caindo atrás da cabeça como cabelo, com balanço ligado à velocidade e ao des
 - [ ] Modelar os portões de verdade, no lugar dos planos
 
 ## D13 · 04/10 dom · Áudio
-- [ ] `AudioStreamPlayer` para a música de fundo
-- [ ] Efeitos de portão positivo, portão negativo, derrota e vitória
+- [x] `AudioStreamPlayer` para a música de fundo, em loop, esperando o arquivo
+- [x] Efeitos de portão positivo e negativo, mais passos em cadência
+- [ ] Trilha: Bruno traz de banco open source, basta pôr em `assets/audio/`
 - [ ] Conferir licença e escrever `CREDITS.md`. CC0 não exige nada, CC-BY exige crédito
 
 ## D14 · 05/10 seg · Acabamento · MARCO M3

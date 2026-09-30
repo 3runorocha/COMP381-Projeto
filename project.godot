@@ -12,6 +12,7 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 [autoload]
 
 GameState="*res://scripts/nucleo/game_state.gd"
+Audio="*res://scripts/nucleo/audio.gd"
 
 [display]
 

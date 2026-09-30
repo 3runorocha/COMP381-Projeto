@@ -16,7 +16,7 @@ height = 1.8
 albedo_color = Color(0.92, 0.36, 0.13, 1)
 roughness = 0.6
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" groups=["jogador"]]
 collision_layer = 1
 collision_mask = 2
 script = ExtResource("1_ctrl")
