@@ -228,8 +228,9 @@ def juntar_e_exportar():
     print("BLOCKOUT blend %s" % caminho_blend)
 
 
-limpar_cena()
-construir_corpo()
-construir_capacete()
-pivo_no_topo(construir_fitas())
-juntar_e_exportar()
+if __name__ == "__main__":
+    limpar_cena()
+    construir_corpo()
+    construir_capacete()
+    pivo_no_topo(construir_fitas())
+    juntar_e_exportar()

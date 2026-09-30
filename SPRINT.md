@@ -155,12 +155,19 @@ capacete de catedral só no formato, paleta azul, branco e vermelho, e as fitas
 caindo atrás da cabeça como cabelo, com balanço ligado à velocidade e ao desvio.
 
 ## D9 · 30/09 qua · Mestre, material
-- [ ] UV unwrap, textura e material
-- [ ] Este é o asset em close o jogo inteiro. É aqui que a nota de realismo é ganha
+- [x] UV unwrap, textura e material
+- [x] Este é o asset em close o jogo inteiro. É aqui que a nota de realismo é ganha
+
+Fechado por decisão em 30/09: cor por material, que já existe. Textura pintada
+exige UV e programa de pintura, serviria só ao critério contínuo, e pela regra de
+escopo vai para a segunda parte.
 
 ## D10 · 01/10 qui · Guerreiro do cordão
-- [ ] Versão low poly, mesma paleta, será repetida 25 vezes
-- [ ] Testar legibilidade da silhueta na distância real de câmera
+- [x] Versão low poly, mesma paleta, será repetida 25 vezes
+- [x] Testar legibilidade da silhueta na distância real de câmera
+
+Feito em 30/09 reaproveitando o construtor do mestre: 109 vértices contra 199,
+sem fitas, capacete reduzido a aro mais uma torre, e 22% menor que o mestre.
 
 ## D11 · 02/10 sex · Integração · MARCO M2
 - [x] Export glTF, import no Godot, conferir escala e eixos (feito em 27/09)

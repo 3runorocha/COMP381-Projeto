@@ -14,13 +14,15 @@ const ANGULO_AUREO: float = 2.39996323
 
 @export var lider_path: NodePath = ^"../Player"
 @export var cena_guerreiro: PackedScene
-## Distancia entre vizinhos na espiral. Precisa ser maior que o diametro do
-## corpo (2 x 0.24 = 0.48), senao os guerreiros se interpenetram.
-@export var espalhamento_base: float = 0.55
+## Distancia entre vizinhos na espiral. Precisa ser maior que a maior medida
+## do corpo. O guerreiro e uma CAIXA de 0.52 por 0.35, entao na diagonal ele
+## ocupa 0.63, e nao os 0.52 da largura. Era 0.55 quando o corpo era capsula.
+@export var espalhamento_base: float = 0.66
 ## Quanto o cordao fica atras do lider.
 @export var recuo: float = 3.0
-## Altura do centro do corpo dos guerreiros.
-@export var altura: float = 0.7
+## Altura da vaga. Com o modelo, a origem fica nos pes, entao a vaga e um
+## ponto no CHAO, nao o centro do corpo.
+@export var altura: float = 0.0
 ## Quao rapido os corpos perseguem sua vaga na formacao.
 @export var velocidade_seguir: float = 9.0
 ## Ate onde o cordao pode chegar de lado. A ponte tem 12 de largura, entao
