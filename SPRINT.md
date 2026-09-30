@@ -1,7 +1,7 @@
 # Sprint AB1 Computação Gráfica, 17 dias
 
-**Início:** 15/09/2026 (ter) · **Entrega:** 01/10/2026 (qui), um dia antes do prazo oficial.
-> **Prazo adiado.** O professor adiou a entrega em cerca de 10 dias. Bruno confirma a data exata na terca, 22/09/2026. Ate la o calendario abaixo segue valendo como ordem das tarefas, nao como datas.
+**Início:** 15/09/2026 · **Entrega:** 10/10/2026 (sab), tres dias antes do prazo oficial de 13/10.
+> **Prazo confirmado em 29/09/2026:** a entrega e **13/10/2026**, com possibilidade de novo adiamento. A sprint mira **10/10**, deixando tres dias de folga.
 
 **Stack:** Godot 4, renderer Forward+, GDScript. Modelagem em Blender, export glTF.
 
@@ -43,9 +43,9 @@ Autoload: game_state.gd
 | Marco | Dia | Data | Significa |
 |---|---|---|---|
 | M1 | D6 | 20/09 | **Uma fase completa jogável**, 2 a 3 min, placeholder |
-| M2 | D11 | 25/09 | Mestre e guerreiro reais, animados, dentro do jogo |
-| M3 | D14 | 28/09 | Som, iluminação e acabamento fechados |
-| M4 | D17 | 01/10 | Build testado e enviado |
+| M2 | D11 | 02/10 | Mestre e guerreiro reais, animados, dentro do jogo |
+| M3 | D14 | 05/10 | Som, iluminação e acabamento fechados |
+| M4 | D17 | 10/10 | Build testado e enviado |
 
 ---
 
@@ -146,42 +146,47 @@ Feito: `docs/guerreiro-referencia.md` com as fontes, e o blockout gerado por
 Descoberta que muda o asset: os chapéus do mestre representam **catedrais**.
 E como a câmera do jogo fica atrás, a vista de costas importa mais que a fachada.
 
-## D8 · 22/09 ter · Mestre, indumentária
-- [ ] Chapéu ornamentado, roupa, fitas, os elementos que dão identidade
-- [ ] Manter a contagem de polígonos sob controle
+## D8 · 29/09 ter · Mestre, indumentária
+- [x] Chapéu ornamentado, roupa, fitas, os elementos que dão identidade
+- [x] Manter a contagem de polígonos sob controle
 
-## D9 · 23/09 qua · Mestre, material
+Feito em 27/09 a partir de uma ilustração de referência: proporção chibi,
+capacete de catedral só no formato, paleta azul, branco e vermelho, e as fitas
+caindo atrás da cabeça como cabelo, com balanço ligado à velocidade e ao desvio.
+
+## D9 · 30/09 qua · Mestre, material
 - [ ] UV unwrap, textura e material
 - [ ] Este é o asset em close o jogo inteiro. É aqui que a nota de realismo é ganha
 
-## D10 · 24/09 qui · Guerreiro do cordão
+## D10 · 01/10 qui · Guerreiro do cordão
 - [ ] Versão low poly, mesma paleta, será repetida 25 vezes
 - [ ] Testar legibilidade da silhueta na distância real de câmera
 
-## D11 · 25/09 sex · Integração · MARCO M2
-- [ ] Export glTF, import no Godot, conferir escala e eixos
+## D11 · 02/10 sex · Integração · MARCO M2
+- [x] Export glTF, import no Godot, conferir escala e eixos (feito em 27/09)
 - [ ] Animação de caminhada via `AnimationPlayer`, podendo vir pronta, já que o reaproveitamento está liberado
-- [ ] Substituir os placeholders do `Player` e do `Guerreiro`
+- [x] Substituir o placeholder do `Player` (feito em 27/09)
+- [ ] Substituir o placeholder do `Guerreiro` no cordão
 - [ ] Dessincronizar a animação por instância com offset aleatório no `seek`, senão os 25 andam como robô
 
 ---
 
 # BLOCO 3 · Produção (D12 a D15)
 
-## D12 · 26/09 sáb · Cenário
+## D12 · 03/10 sab · Cenário
 - [ ] Chão, laterais, céu e props de ambientação
 - [ ] Modelar os portões de verdade, no lugar dos planos
 
-## D13 · 27/09 dom · Áudio
+## D13 · 04/10 dom · Áudio
 - [ ] `AudioStreamPlayer` para a música de fundo
 - [ ] Efeitos de portão positivo, portão negativo, derrota e vitória
 - [ ] Conferir licença e escrever `CREDITS.md`. CC0 não exige nada, CC-BY exige crédito
 
-## D14 · 28/09 seg · Acabamento · MARCO M3
+## D14 · 05/10 seg · Acabamento · MARCO M3
 - [ ] Iluminação, sombras, ajuste de céu e fog no `WorldEnvironment`
 - [ ] Materiais e enquadramento final do mestre
 
-## D15 · 29/09 ter · Playtest
+## D15 · 06/10 ter · Playtest
 - [ ] Alguém de fora joga sem instrução
 - [ ] Anotar onde trava e onde a escolha do portão ficou óbvia demais
 - [ ] Recalibrar valores
@@ -190,10 +195,10 @@ E como a câmera do jogo fica atrás, a vista de costas importa mais que a facha
 
 # BLOCO 4 · Entrega (D16 a D17)
 
-## D16 · 30/09 qua · Buffer
+## D16 · 07 a 09/10 qua a sex · Buffer
 Reservado para o que atrasou. Se nada atrasou, polimento. **Não planejar nada novo aqui.**
 
-## D17 · 01/10 qui · Entrega
+## D17 · 10/10 sab · Entrega
 - [ ] Build de release
 - [ ] Testar o executável em máquina limpa
 - [ ] Texto de entrega e envio

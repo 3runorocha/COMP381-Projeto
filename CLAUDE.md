@@ -6,7 +6,8 @@ Vale 5,0 pontos. Bruno faz sozinho.
 
 ## Prazo e critérios de nota
 
-Entrega **02/10/2026**. A sprint mira **01/10**, um dia antes.
+Entrega **13/10/2026**, confirmada com o professor em 29/09, com possibilidade de
+novo adiamento. A sprint mira **10/10**, deixando tres dias de folga.
 
 O professor avalia cinco itens, e quatro deles são binários:
 
