@@ -19,6 +19,18 @@ O professor avalia cinco itens, e quatro deles são binários:
 
 Mais um critério contínuo: *"quanto maior a qualidade e realismo, maior a nota"*.
 
+**Escopo desta entrega (decidido em 29/09):** atender apenas ao que foi pedido.
+Os cinco itens acima, e só. Iluminação, acabamento visual e qualquer refino que
+sirva só ao critério contínuo ficam para a **segunda parte do projeto**. Na
+prática isso desarma o D14 da sprint e vale como regra geral: nada de polir o
+que não foi pedido enquanto houver item obrigatório em aberto.
+
+**Pendência com Bruno:** a **trilha sonora**. Ele traz de banco open source. Basta
+pôr o arquivo em `assets/audio/` com um destes nomes e ele toca em loop sozinho,
+sem mexer em código: `musica_loop.ogg`, `musica_loop.wav`, `musica.ogg`,
+`musica.wav`. Conferir licença e anotar crédito: CC0 não exige nada, CC-BY exige.
+Sem o arquivo o jogo roda com os efeitos e um aviso no log.
+
 O professor autorizou **reaproveitar assets** (música, sprites e afins). O
 requisito de modelar objetos continua valendo, então a modelagem própria segue
 sendo entregável. Atenção a licença: CC0 não exige nada, CC-BY exige crédito.

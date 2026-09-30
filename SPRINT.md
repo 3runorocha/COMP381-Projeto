@@ -44,7 +44,7 @@ Autoload: game_state.gd
 |---|---|---|---|
 | M1 | D6 | 20/09 | **Uma fase completa jogável**, 2 a 3 min, placeholder |
 | M2 | D11 | 02/10 | Mestre e guerreiro reais, animados, dentro do jogo |
-| M3 | D14 | 05/10 | Som, iluminação e acabamento fechados |
+| M3 | D14 | 05/10 | adiado para a segunda parte do projeto |
 | M4 | D17 | 10/10 | Build testado e enviado |
 
 ---
@@ -180,12 +180,19 @@ caindo atrás da cabeça como cabelo, com balanço ligado à velocidade e ao des
 ## D13 · 04/10 dom · Áudio
 - [x] `AudioStreamPlayer` para a música de fundo, em loop, esperando o arquivo
 - [x] Efeitos de portão positivo e negativo, mais passos em cadência
-- [ ] Trilha: Bruno traz de banco open source, basta pôr em `assets/audio/`
+- [ ] **Trilha: PENDÊNCIA DE BRUNO.** Traz de banco open source e põe em
+      `assets/audio/` como `musica_loop.ogg` ou `.wav`. Conferir licença e crédito.
 - [ ] Conferir licença e escrever `CREDITS.md`. CC0 não exige nada, CC-BY exige crédito
 
-## D14 · 05/10 seg · Acabamento · MARCO M3
-- [ ] Iluminação, sombras, ajuste de céu e fog no `WorldEnvironment`
-- [ ] Materiais e enquadramento final do mestre
+## D14 · 05/10 seg · ADIADO para a segunda parte
+
+Iluminação e acabamento visual **não entram nesta entrega** (decidido em
+29/09). Nenhum dos cinco itens avaliados pede iluminação; ela serviria só ao
+critério contínuo de qualidade e realismo, e fica para a segunda parte do
+projeto. O dia vira folga, somando quatro dias de buffer.
+
+- [x] ~~Iluminação, sombras, ajuste de céu e fog~~ adiado
+- [x] ~~Materiais e enquadramento final do mestre~~ adiado
 
 ## D15 · 06/10 ter · Playtest
 - [ ] Alguém de fora joga sem instrução
