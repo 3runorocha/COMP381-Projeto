@@ -25,6 +25,20 @@ sirva só ao critério contínuo ficam para a **segunda parte do projeto**. Na
 prática isso desarma o D14 da sprint e vale como regra geral: nada de polir o
 que não foi pedido enquanto houver item obrigatório em aberto.
 
+## Pendencias abertas (atualizado em 01/10/2026)
+
+Lista curta do que falta. Os detalhes de cada item estao nas secoes adiante.
+
+1. **HUD com acabamento.** O layout atual funciona (cantos livres, centro limpo,
+   separador de milhar) mas e cru. Bruno quis deixar para depois da modelagem,
+   que agora esta feita.
+2. **Cenario de fundo.** Hoje a pista e um bloco liso entre duas bordas, com
+   neblina e nada mais. E o D12 da sprint.
+3. **Frequencia dos portoes.** A mistura de operacoes esta desequilibrada,
+   subtracao em 47%, e a margem real na chegada fica em 1.18 contra o alvo de
+   1.20 a 1.40. Os dois detalhados em "Divida conhecida".
+4. **Trilha sonora.** Pendencia de Bruno, abaixo.
+
 **Pendência com Bruno:** a **trilha sonora**. Ele traz de banco open source. Basta
 pôr o arquivo em `assets/audio/` com um destes nomes e ele toca em loop sozinho,
 sem mexer em código: `musica_loop.ogg`, `musica_loop.wav`, `musica.ogg`,
