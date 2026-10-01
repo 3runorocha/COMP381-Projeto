@@ -25,8 +25,12 @@ const ANGULO_AUREO: float = 2.39996323
 @export var escala_minima: float = 0.55
 ## Em quantos corpos a escala chega ao minimo.
 @export var corpos_para_escala_minima: int = 40
-## Quanto o cordao fica atras do lider.
-@export var recuo: float = 3.0
+## Distancia entre o lider e o guerreiro MAIS PROXIMO dele.
+##
+## Medir pelo corpo da frente, e nao pelo centro do grupo, e o que mantem o
+## espaco constante: o centro precisa recuar quando o cordao engorda, senao a
+## metade da frente atropelaria o lider.
+@export var folga_atras: float = 1.1
 ## Altura da vaga. Com o modelo, a origem fica nos pes, entao a vaga e um
 ## ponto no CHAO, nao o centro do corpo.
 @export var altura: float = 0.0
@@ -137,8 +141,7 @@ func _process(delta: float) -> void:
 ## deixar a metade de tras cair da pista.
 func _centro_da_formacao() -> Vector3:
     var centro := Comum.posicao_suave(_lider)
-    var raio_maximo := _espalhamento * sqrt(float(MAX_VISIVEL - 1))
-    var margem := maxf(meia_largura_util - raio_maximo, 0.0)
+    var margem := maxf(meia_largura_util - _raio_maximo(), 0.0)
     centro.x = clampf(centro.x, -margem, margem)
     return centro
 
@@ -150,6 +153,7 @@ func _centro_da_formacao() -> Vector3:
 func _vaga(indice: int, centro: Vector3) -> Vector3:
     var angulo := float(indice) * ANGULO_AUREO
     var raio := _espalhamento * sqrt(float(indice))
+    var recuo := folga_atras + _raio_maximo()
     return Vector3(
         # O clamp por corpo e rede de seguranca, para o caso de a formacao
         # ficar mais larga que a propria pista.
@@ -157,6 +161,15 @@ func _vaga(indice: int, centro: Vector3) -> Vector3:
         altura,
         centro.z + sin(angulo) * raio + recuo
     )
+
+
+## Ate onde a formacao chega, a partir do centro dela.
+##
+## Conta os corpos que existem AGORA, nao o teto. Usando o teto, um cordao de
+## quatro guerreiros reservava espaco para quarenta e cinco e ficava cinco
+## unidades atras do lider, com um buraco no meio.
+func _raio_maximo() -> float:
+    return _espalhamento * sqrt(float(maxi(_visiveis - 1, 0)))
 
 
 ## Tranco de escala quando um guerreiro entra, para a mudanca ser visivel.

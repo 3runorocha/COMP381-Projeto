@@ -45,6 +45,14 @@ func _ready() -> void:
         push_warning("caminhada: nao achei as duas pernas sob %s." % get_parent().name)
 
 
+## Em que ponto do ciclo de passo este corpo esta.
+##
+## As fitas leem isto para ondular junto com a passada, em vez de oscilarem
+## num relogio proprio e descolado do que as pernas estao fazendo.
+func ciclo() -> float:
+    return _ciclo + _fase
+
+
 ## Desloca o ciclo desta instancia, para o cordao nao andar em uniformidade.
 func definir_fase(fase: float) -> void:
     _fase = fase
