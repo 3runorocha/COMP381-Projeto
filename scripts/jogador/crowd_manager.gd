@@ -51,6 +51,11 @@ func _ready() -> void:
         var corpo: Node3D = cena_guerreiro.instantiate()
         add_child(corpo)
         corpo.visible = false
+        # Fase propria por corpo: em fase, os 25 andam em passo identico e o
+        # cordao vira desfile militar em vez de folguedo.
+        var caminhada := corpo.find_child("Caminhada", true, false)
+        if caminhada != null:
+            caminhada.definir_fase(float(i) * 0.37)
         _corpos.append(corpo)
 
     GameState.contagem_mudou.connect(_on_contagem_mudou)

@@ -29,9 +29,11 @@ ESCALA = 0.78  # menor que o mestre, de proposito
 def construir():
     base.limpar_cena()
 
-    for lado, x in (("esq", -0.10), ("dir", 0.10)):
-        base.caixa("bota_" + lado, (x, -0.02, 0.07), (0.17, 0.24, 0.14), "vermelho")
-        base.caixa("perna_" + lado, (x, 0.0, 0.36), (0.15, 0.19, 0.44), "azul")
+    # Mesma funcao do mestre, outras medidas: as pernas saem separadas, com o
+    # pivo no quadril, para poderem girar no jogo.
+    base.montar_pernas(0.10, 0.58,
+                       bota=(0.17, 0.24, 0.14), bota_z=0.07,
+                       coxa=(0.15, 0.19, 0.44), coxa_z=0.36)
 
     base.caixa("camisa", (0.0, 0.0, 0.78), (0.41, 0.24, 0.42), "vermelho")
     base.caixa("ombros", (0.0, 0.0, 0.94), (0.50, 0.24, 0.11), "vermelho")
@@ -51,6 +53,12 @@ def construir():
 def exportar():
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+
+    # Junta tudo menos as pernas, que precisam continuar girando sozinhas.
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in bpy.data.objects:
+        if obj.type == "MESH" and not obj.name.startswith("perna_"):
+            obj.select_set(True)
     corpo = bpy.data.objects.get("camisa")
     bpy.context.view_layer.objects.active = corpo
     bpy.ops.object.join()
@@ -72,9 +80,20 @@ def exportar():
 
     guerreiro = bpy.context.active_object
     guerreiro.name = "Guerreiro"
-    guerreiro.scale = (ESCALA, ESCALA, ESCALA)
-    bpy.ops.object.transform_apply(scale=True)
+    # Escala em TODAS as pecas, senao as pernas ficariam do tamanho do mestre
+    # penduradas num corpo menor.
+    for obj in bpy.data.objects:
+        if obj.type == "MESH":
+            obj.scale = (ESCALA, ESCALA, ESCALA)
+            obj.location = obj.location * ESCALA
+    bpy.ops.object.select_all(action="SELECT")
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 
+    # Origem so no corpo: origin_set vale para tudo que estiver selecionado, e
+    # aqui isso jogaria o pivo das pernas para os pes.
+    bpy.ops.object.select_all(action="DESELECT")
+    guerreiro.select_set(True)
+    bpy.context.view_layer.objects.active = guerreiro
     bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
     bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
 

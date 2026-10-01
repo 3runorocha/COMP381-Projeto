@@ -171,14 +171,19 @@ sem fitas, capacete reduzido a aro mais uma torre, e 22% menor que o mestre.
 
 ## D11 · 02/10 sex · Integração · MARCO M2
 - [x] Export glTF, import no Godot, conferir escala e eixos (feito em 27/09)
-- [ ] Animação de caminhada via `AnimationPlayer`, podendo vir pronta, já que o reaproveitamento está liberado
+- [x] Animação de caminhada via `AnimationPlayer`, podendo vir pronta, já que o reaproveitamento está liberado
 - [x] Substituir o placeholder do `Player` (feito em 27/09)
-- [ ] Substituir o placeholder do `Guerreiro` no cordão
-- [ ] Dessincronizar a animação por instância com offset aleatório no `seek`, senão os 25 andam como robô
+- [x] Substituir o placeholder do `Guerreiro` no cordão
+- [x] Dessincronizar a animação por instância com offset aleatório no `seek`, senão os 25 andam como robô
 
 ---
 
 # BLOCO 3 · Produção (D12 a D15)
+
+Feito em 01/10. A caminhada não usa `AnimationPlayer`: as pernas são nós
+separados no modelo, com pivô no quadril, girados por script. Mesmo padrão das
+fitas. A cadência vem de `Comum.cadencia_passo()`, a mesma função que dispara o
+som do passo, então o pé bate junto com o som.
 
 ## D12 · 03/10 sab · Cenário
 - [ ] Chão, laterais, céu e props de ambientação

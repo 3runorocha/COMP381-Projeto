@@ -79,7 +79,7 @@ func _passos(delta: float) -> void:
         if _player == null:
             return
 
-    var por_segundo := clampf(Comum.velocidade(_player) / 5.0, 2.0, 7.0)
+    var por_segundo := Comum.cadencia_passo(Comum.velocidade(_player))
     _ate_o_passo -= delta
     if _ate_o_passo > 0.0:
         return

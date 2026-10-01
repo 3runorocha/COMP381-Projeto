@@ -42,3 +42,14 @@ static func velocidade(alvo: Node, padrao: float = 12.0) -> float:
     if alvo != null and "velocidade_frente" in alvo:
         return alvo.velocidade_frente
     return padrao
+
+
+## Quantos passos por segundo na velocidade dada.
+##
+## Tem teto de proposito: a velocidade do jogo nao tem limite, e sem travar a
+## cadencia o passo viraria metralhadora e a perna, um ventilador.
+##
+## Mora aqui porque DUAS coisas dependem dela e precisam concordar: o som do
+## passo e o giro da perna. Em copias separadas, o pe bateria fora do som.
+static func cadencia_passo(velocidade: float) -> float:
+    return clampf(velocidade / 5.0, 2.0, 7.0)

@@ -100,9 +100,9 @@ def construir_corpo():
     # Duas pernas separadas de verdade. Antes eu punha uma caixa branca no meio
     # para "abrir" o vao, mas caixa soma geometria em vez de subtrair, e o
     # resultado era uma mancha branca pintada na calca.
-    for lado, x in (("esq", -0.12), ("dir", 0.12)):
-        caixa("bota_" + lado, (x, -0.03, 0.09), (0.21, 0.30, 0.18), "vermelho")
-        caixa("perna_" + lado, (x, 0.0, 0.46), (0.19, 0.24, 0.56), "azul")
+    montar_pernas(0.12, 0.74,
+                  bota=(0.21, 0.30, 0.18), bota_z=0.09,
+                  coxa=(0.19, 0.24, 0.56), coxa_z=0.46)
 
     caixa("camisa", (0.0, 0.0, 0.99), (0.52, 0.30, 0.54), "vermelho")
     caixa("ombros", (0.0, 0.0, 1.20), (0.64, 0.30, 0.14), "vermelho")
@@ -120,6 +120,29 @@ def construir_corpo():
     # Cabeca grande de proposito: e o que da a leitura chibi da referencia, e o
     # que sustenta um capacete deste tamanho sem parecer alfinete.
     caixa("cabeca", (0.0, 0.0, 1.57), (0.50, 0.44, 0.50), "pele")
+
+
+## Monta as duas pernas como objetos SEPARADOS, com o pivo no quadril.
+##
+## Separadas porque perna dentro da malha do corpo nao tem como girar. Pivo no
+## quadril porque girar pelo meio faria a coxa furar a barriga: a perna tem que
+## balancar pendurada, como pendula.
+def montar_pernas(afastamento, quadril, bota, bota_z, coxa, coxa_z):
+    for lado, sinal in (("esq", -1.0), ("dir", 1.0)):
+        x = sinal * afastamento
+        pe = caixa("bota_" + lado, (x, -0.03, bota_z), bota, "vermelho")
+        perna = caixa("perna_" + lado, (x, 0.0, coxa_z), coxa, "azul")
+
+        bpy.ops.object.select_all(action="DESELECT")
+        pe.select_set(True)
+        perna.select_set(True)
+        bpy.context.view_layer.objects.active = perna
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        bpy.ops.object.join()
+
+        bpy.context.scene.cursor.location = (x, 0.0, quadril)
+        bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
+    bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
 
 
 def construir_capacete():
@@ -197,7 +220,8 @@ def juntar_e_exportar():
     # precisam continuar sendo nos separados para o Godot poder balanca-las.
     bpy.ops.object.select_all(action="DESELECT")
     for obj in bpy.data.objects:
-        if obj.type == "MESH" and not obj.name.startswith("fita_"):
+        solto = obj.name.startswith("fita_") or obj.name.startswith("perna_")
+        if obj.type == "MESH" and not solto:
             obj.select_set(True)
     corpo = bpy.data.objects.get("camisa")
     bpy.context.view_layer.objects.active = corpo
