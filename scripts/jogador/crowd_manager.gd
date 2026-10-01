@@ -7,24 +7,24 @@ extends Node3D
 ## MultiMeshInstance3D, que e barato de desenhar mas nao faz animacao
 ## esqueletica, e no D11 os guerreiros precisam andar.
 
-const MAX_VISIVEL: int = 150
+const MAX_VISIVEL: int = 400
 ## Angulo aureo. Distribui pontos num disco sem alinhamentos nem sobreposicao,
 ## que e o que faz o grupo parecer multidao e nao grade.
 const ANGULO_AUREO: float = 2.39996323
 
 @export var lider_path: NodePath = ^"../Player"
 @export var cena_guerreiro: PackedScene
-## Distancia entre vizinhos na espiral, no tamanho cheio. Precisa cobrir a
-## maior medida do corpo: o guerreiro e uma CAIXA de 0.67 por 0.35, entao na
-## diagonal ele ocupa 0.76, e nao os 0.67 da largura.
-@export var espalhamento_base: float = 0.76
+## Distancia entre vizinhos na espiral, no tamanho cheio.
+##
+## Era 0.76, a diagonal da caixa do guerreiro. Baixou para a largura dele,
+## 0.67, para o grupo ficar mais cheio: na espiral o vizinho raramente esta na
+## diagonal exata, entao usar a diagonal era folga demais.
+@export var espalhamento_base: float = 0.67
 ## Tamanho do guerreiro com o cordao pequeno. 1.0 e o tamanho do lider.
 @export var escala_maxima: float = 1.0
-## Tamanho com o cordao cheio. Nao desce mais que isso: corpo pequeno demais
-## le como "mais longe", nao como "mais gente", e o asset cultural some.
-@export var escala_minima: float = 0.35
-## Em quantos corpos a escala chega ao minimo.
-@export var corpos_para_escala_minima: int = 130
+## Piso do tamanho. Corpo menor que isso le como "mais longe", nao como "mais
+## gente", e o asset cultural some.
+@export var escala_minima: float = 0.26
 ## Distancia entre o lider e o guerreiro MAIS PROXIMO dele.
 ##
 ## Medir pelo corpo da frente, e nao pelo centro do grupo, e o que mantem o
@@ -87,12 +87,18 @@ func _on_contagem_mudou(_anterior: int, novo: int) -> void:
 func _aplicar(contagem: int, instantaneo: bool) -> void:
     _visiveis = clampi(contagem, 0, MAX_VISIVEL)
 
-    # Os guerreiros encolhem conforme o cordao cresce. Encolher aqui e MEIO,
-    # nao fim: o ganho e caber mais corpo na mesma largura de ponte. Por isso
-    # ha piso na escala, senao o grupo pareceria se afastar em vez de crescer.
-    var cheio := float(maxi(corpos_para_escala_minima - 1, 1))
-    var quanto := clampf(float(_visiveis - 1) / cheio, 0.0, 1.0)
-    _escala_corpo = lerpf(escala_maxima, escala_minima, quanto)
+    # A escala nao vem de uma curva arbitraria: ela e DERIVADA de caber na
+    # ponte. Com poucos corpos eles ficam no tamanho cheio e o grupo cresce;
+    # a partir do ponto em que a formacao encostaria na borda, os corpos
+    # encolhem exatamente o quanto for preciso, e o cordao passa a ocupar a
+    # largura inteira em vez de encolher junto.
+    #
+    # Antes era uma interpolacao por contagem, e ela errava o alvo: com 150
+    # guerreiros o grupo media 5.64 de largura, e com 400 media 3.99, porque
+    # a escala caia mais rapido do que a contagem subia.
+    var passos := sqrt(float(maxi(_visiveis - 1, 1)))
+    var cabe := meia_largura_util / (espalhamento_base * passos)
+    _escala_corpo = clampf(minf(escala_maxima, cabe), escala_minima, escala_maxima)
 
     # O espacamento acompanha o tamanho do corpo. Fixo, ou sobraria buraco com
     # os corpos pequenos, ou eles se interpenetrariam no tamanho cheio.

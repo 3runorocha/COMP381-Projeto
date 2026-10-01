@@ -158,9 +158,18 @@ reposiciona a linha de chegada e devolve a tela de vitoria. Zero deixa infinito.
 - **Pendente:** o que acontece quando nenhum lado e pagavel. Bruno acha que nao
   deveria acontecer.
 
-**Escala do cordao (implementada em 01/10).** Os guerreiros comecam do tamanho
-do lider e encolhem conforme o cordao cresce, de 1.0 ate 0.35 ao longo dos
-primeiros 130 corpos. O teto subiu de 25 para 150.
+**Escala do cordao (implementada em 01/10).** Teto de 400 guerreiros.
+
+**A escala e DERIVADA de caber na ponte, nao de uma curva por contagem.** Com
+poucos corpos eles ficam no tamanho do lider e o grupo cresce; a partir do
+ponto em que a formacao encostaria na borda, cada corpo encolhe exatamente o
+quanto for preciso, e o cordao passa a ocupar a largura inteira. Adicionar
+guerreiro depois disso deixa o grupo mais DENSO, nao menor.
+
+A versao anterior interpolava a escala por contagem e errava o alvo: com 150
+guerreiros o grupo media 5.64 de largura e com 400 media 3.99, porque a escala
+caia mais rapido do que a contagem subia. Medido agora: 4.39 de largura com
+50 corpos, 5.60 com 150 e 5.66 com 400, contra o limite de 5.7.
 
 - **Encolher e o meio, nao o fim.** Corpo menor le como "mais longe", nao como
   "mais". O ganho e caber mais corpo na mesma largura de ponte, e por isso ha
