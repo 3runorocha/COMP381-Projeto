@@ -63,14 +63,13 @@ func _process(delta: float) -> void:
     # O corpo sobe DUAS vezes por ciclo de passo, uma a cada pe que encosta,
     # entao a onda da fita corre no dobro da frequencia do ciclo.
     var passo := TAU * _ciclo_do_passo()
-    var meio := (float(_fitas.size()) - 1.0) * 0.5
     for i in _fitas.size():
         var forca := 0.3 + 0.7 * vento
         var onda := deg_to_rad(ondulacao_graus) * forca * sin(passo - float(i) * atraso_entre_fitas)
-        # Leque fixo, nao animado: as fitas abrem levemente para fora do centro
-        # e param de parecer seis copias paralelas da mesma peca.
-        var leque := deg_to_rad(3.0) * (float(i) - meio)
-        _fitas[i].rotation = Vector3(deitar + onda, 0.0, lateral + leque)
+        # So para tras. Nao ha leque: abrir as fitas simetricamente para fora
+        # do centro montava um cone invertido atras da cabeca, que nao e o que
+        # fita pendurada faz.
+        _fitas[i].rotation = Vector3(deitar + onda, 0.0, lateral)
 
 
 ## Ciclo da caminhada deste mesmo corpo.
