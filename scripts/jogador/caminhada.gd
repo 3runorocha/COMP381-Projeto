@@ -12,11 +12,12 @@ extends Node3D
 ## guerreiros do cordao andam em passo identico e o grupo vira um desfile
 ## militar em vez de um cordao de folguedo.
 
-@export var player_path: NodePath = ^".."
 ## Quanto a perna abre, em graus, na frente e atras.
 @export var passada_graus: float = 26.0
-## Quanto o corpo sobe e desce a cada passo.
+## Quanto o corpo sobe e desce a cada passo, na velocidade cheia.
 @export var altura_do_salto: float = 0.045
+## Velocidade em que o salto chega ao tamanho cheio.
+@export var velocidade_do_salto_cheio: float = 40.0
 
 var _perna_esq: Node3D = null
 var _perna_dir: Node3D = null
@@ -28,7 +29,11 @@ var _ciclo: float = 0.0
 
 
 func _ready() -> void:
-    _player = get_node_or_null(player_path)
+    # Por grupo: este script roda tanto no mestre quanto nos 25 do cordao, e
+    # a distancia ate o jogador e diferente em cada um. Com caminho relativo,
+    # o cordao apontava para o proprio modelo, caia na velocidade padrao de 12
+    # e andava devagar enquanto o lider acelerava.
+    _player = Comum.jogador(get_tree())
     # Procura no PAI, nao em si mesmo: este no e um irmao das pecas do modelo,
     # nao o dono delas. Um no so pode ter um script, e o do modelo ja e o das
     # fitas, entao a caminhada vive num no a parte.
@@ -48,7 +53,8 @@ func definir_fase(fase: float) -> void:
 func _process(delta: float) -> void:
     # Avanca em PASSOS, nao em segundos: assim acelerar aperta a passada em vez
     # de so aumentar o deslocamento, e a perna acompanha a corrida.
-    _ciclo += Comum.cadencia_passo(Comum.velocidade(_player)) * delta
+    var velocidade := Comum.velocidade(_player)
+    _ciclo += Comum.cadencia_passo(velocidade) * delta
 
     var angulo := TAU * (_ciclo + _fase) * 0.5
     var abertura := deg_to_rad(passada_graus) * sin(angulo)
@@ -58,8 +64,10 @@ func _process(delta: float) -> void:
         _perna_dir.rotation.x = -abertura
 
     # O modelo inteiro sobe duas vezes por ciclo, uma a cada pe que encosta.
+    # O salto cresce com a velocidade: parado, o mesmo salto lia como pulinho.
     if _corpo != null:
-        _corpo.position.y = _altura_base + altura_do_salto * absf(sin(angulo))
+        var forca := clampf(velocidade / velocidade_do_salto_cheio, 0.3, 1.0)
+        _corpo.position.y = _altura_base + altura_do_salto * forca * absf(sin(angulo))
 
 
 func _coletar(no: Node) -> void:

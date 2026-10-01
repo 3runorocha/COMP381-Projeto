@@ -52,4 +52,15 @@ static func velocidade(alvo: Node, padrao: float = 12.0) -> float:
 ## Mora aqui porque DUAS coisas dependem dela e precisam concordar: o som do
 ## passo e o giro da perna. Em copias separadas, o pe bateria fora do som.
 static func cadencia_passo(velocidade: float) -> float:
-    return clampf(velocidade / 5.0, 2.0, 7.0)
+    # Piso em 3, nao em 2: parado, dois passos por segundo lia como arrastar o
+    # pe, nao como correr.
+    return clampf(velocidade / 5.0, 3.0, 7.0)
+
+
+## O jogador, achado pelo grupo "jogador".
+##
+## Por grupo, nunca por caminho. Caminho relativo ja quebrou tres vezes neste
+## projeto, e sempre em silencio: o no e encontrado, mas e o errado, cai no
+## valor padrao e o bug aparece longe da causa.
+static func jogador(arvore: SceneTree) -> Node:
+    return arvore.get_first_node_in_group(&"jogador")

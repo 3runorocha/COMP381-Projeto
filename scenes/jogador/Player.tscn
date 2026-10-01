@@ -31,4 +31,3 @@ script = ExtResource("3_fitas")
 
 [node name="Caminhada" type="Node3D" parent="Mestre"]
 script = ExtResource("4_passo")
-player_path = NodePath("../..")

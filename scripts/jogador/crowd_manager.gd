@@ -55,7 +55,12 @@ func _ready() -> void:
         # cordao vira desfile militar em vez de folguedo.
         var caminhada := corpo.find_child("Caminhada", true, false)
         if caminhada != null:
-            caminhada.definir_fase(float(i) * 0.37)
+            # Espalhados por igual pelo ciclo. Aqui, ao contrario da formacao,
+            # nao ha vantagem em razao aurea: o numero de corpos e fixo, entao
+            # dividir o ciclo em partes iguais ja e o espacamento maximo
+            # possivel. Passo fixo de 0.37 fazia os corpos 0 e 11 cairem quase
+            # no mesmo ponto e andarem juntos.
+            caminhada.definir_fase(2.0 * float(i) / float(MAX_VISIVEL))
         _corpos.append(corpo)
 
     GameState.contagem_mudou.connect(_on_contagem_mudou)

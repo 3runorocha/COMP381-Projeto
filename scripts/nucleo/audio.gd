@@ -72,10 +72,7 @@ func _passos(delta: float) -> void:
     if get_tree().paused:
         return
     if _player == null or not is_instance_valid(_player):
-        # Por grupo, nao por caminho. Caminho absoluto como /root/Main/Player
-        # quebra assim que a cena nao e a raiz, e falha em silencio: o passo
-        # simplesmente nunca toca e ninguem descobre por que.
-        _player = get_tree().get_first_node_in_group(&"jogador")
+        _player = Comum.jogador(get_tree())
         if _player == null:
             return
 
