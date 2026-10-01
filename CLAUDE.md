@@ -159,8 +159,8 @@ reposiciona a linha de chegada e devolve a tela de vitoria. Zero deixa infinito.
   deveria acontecer.
 
 **Escala do cordao (implementada em 01/10).** Os guerreiros comecam do tamanho
-do lider e encolhem conforme o cordao cresce, de 1.0 ate 0.45 ao longo dos
-primeiros 70 corpos. O teto subiu de 25 para 80.
+do lider e encolhem conforme o cordao cresce, de 1.0 ate 0.35 ao longo dos
+primeiros 130 corpos. O teto subiu de 25 para 150.
 
 - **Encolher e o meio, nao o fim.** Corpo menor le como "mais longe", nao como
   "mais". O ganho e caber mais corpo na mesma largura de ponte, e por isso ha
@@ -169,6 +169,11 @@ primeiros 70 corpos. O teto subiu de 25 para 80.
   pequenos, ou eles se interpenetrariam no tamanho cheio.
 - Medido: distancia minima entre vizinhos igual ao espacamento em todas as
   contagens, de 4 a 500, e nada saindo da ponte.
+- **O cordao segue o eixo Z EXATO, so o lateral e suavizado.** Mesmo erro que
+  a camera tinha: suavizacao de primeira ordem fica velocidade dividida pela
+  constante atras do alvo, e a 132 de velocidade isso media 1.83 unidades de
+  atraso por corpo. Medir a VAGA nao revelava nada, porque a vaga estava
+  certa; quem estava atrasado era o corpo perseguindo ela.
 - **A folga ate o lider e medida, nao suposta.** `_recalcular_recuo()` procura
   qual corpo esta mais adiantado na espiral e recua o grupo por essa medida.
   Supor que algum corpo cai bem na frente da formacao esta errado: com o

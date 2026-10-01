@@ -7,7 +7,7 @@ extends Node3D
 ## MultiMeshInstance3D, que e barato de desenhar mas nao faz animacao
 ## esqueletica, e no D11 os guerreiros precisam andar.
 
-const MAX_VISIVEL: int = 80
+const MAX_VISIVEL: int = 150
 ## Angulo aureo. Distribui pontos num disco sem alinhamentos nem sobreposicao,
 ## que e o que faz o grupo parecer multidao e nao grade.
 const ANGULO_AUREO: float = 2.39996323
@@ -22,9 +22,9 @@ const ANGULO_AUREO: float = 2.39996323
 @export var escala_maxima: float = 1.0
 ## Tamanho com o cordao cheio. Nao desce mais que isso: corpo pequeno demais
 ## le como "mais longe", nao como "mais gente", e o asset cultural some.
-@export var escala_minima: float = 0.45
+@export var escala_minima: float = 0.35
 ## Em quantos corpos a escala chega ao minimo.
-@export var corpos_para_escala_minima: int = 70
+@export var corpos_para_escala_minima: int = 130
 ## Distancia entre o lider e o guerreiro MAIS PROXIMO dele.
 ##
 ## Medir pelo corpo da frente, e nao pelo centro do grupo, e o que mantem o
@@ -130,11 +130,20 @@ func _process(delta: float) -> void:
 
     for i in _visiveis:
         var corpo := _corpos[i]
+        var vaga := _vaga(i, centro)
         # Quem esta mais atras na formacao persegue mais devagar, o que da
         # elasticidade ao grupo em vez de um bloco rigido preso ao lider.
         var atraso := 1.0 - 0.45 * (float(i) / float(MAX_VISIVEL))
         var peso := Comum.peso(ritmo * atraso, delta)
-        corpo.global_position = corpo.global_position.lerp(_vaga(i, centro), peso)
+        # Z EXATO, so o lateral suavizado. Mesmo erro que a camera tinha:
+        # suavizacao de primeira ordem fica velocidade dividida pela constante
+        # atras do alvo, e a 132 de velocidade isso media 1.83 unidades. Como
+        # o avanco e constante, nao ha o que suavizar nele. O lateral sim, e e
+        # dali que vem a elasticidade quando o jogador desvia.
+        corpo.global_position = Vector3(
+            lerpf(corpo.global_position.x, vaga.x, peso),
+            vaga.y,
+            vaga.z)
 
 
 ## Onde o grupo inteiro esta centrado, ja trazido para dentro da ponte.
