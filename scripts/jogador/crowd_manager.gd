@@ -7,7 +7,7 @@ extends Node3D
 ## MultiMeshInstance3D, que e barato de desenhar mas nao faz animacao
 ## esqueletica, e no D11 os guerreiros precisam andar.
 
-const MAX_VISIVEL: int = 45
+const MAX_VISIVEL: int = 80
 ## Angulo aureo. Distribui pontos num disco sem alinhamentos nem sobreposicao,
 ## que e o que faz o grupo parecer multidao e nao grade.
 const ANGULO_AUREO: float = 2.39996323
@@ -22,15 +22,15 @@ const ANGULO_AUREO: float = 2.39996323
 @export var escala_maxima: float = 1.0
 ## Tamanho com o cordao cheio. Nao desce mais que isso: corpo pequeno demais
 ## le como "mais longe", nao como "mais gente", e o asset cultural some.
-@export var escala_minima: float = 0.55
+@export var escala_minima: float = 0.45
 ## Em quantos corpos a escala chega ao minimo.
-@export var corpos_para_escala_minima: int = 40
+@export var corpos_para_escala_minima: int = 70
 ## Distancia entre o lider e o guerreiro MAIS PROXIMO dele.
 ##
 ## Medir pelo corpo da frente, e nao pelo centro do grupo, e o que mantem o
 ## espaco constante: o centro precisa recuar quando o cordao engorda, senao a
 ## metade da frente atropelaria o lider.
-@export var folga_atras: float = 0.25
+@export var folga_atras: float = 0.35
 ## Altura da vaga. Com o modelo, a origem fica nos pes, entao a vaga e um
 ## ponto no CHAO, nao o centro do corpo.
 @export var altura: float = 0.0
@@ -45,6 +45,7 @@ var _corpos: Array[Node3D] = []
 var _visiveis: int = 0
 var _espalhamento: float = 0.76
 var _escala_corpo: float = 1.0
+var _recuo: float = 1.0
 
 
 func _ready() -> void:
@@ -96,6 +97,7 @@ func _aplicar(contagem: int, instantaneo: bool) -> void:
     # O espacamento acompanha o tamanho do corpo. Fixo, ou sobraria buraco com
     # os corpos pequenos, ou eles se interpenetrariam no tamanho cheio.
     _espalhamento = espalhamento_base * _escala_corpo
+    _recalcular_recuo()
 
     var centro := _centro_da_formacao()
     for i in MAX_VISIVEL:
@@ -153,23 +155,34 @@ func _centro_da_formacao() -> Vector3:
 func _vaga(indice: int, centro: Vector3) -> Vector3:
     var angulo := float(indice) * ANGULO_AUREO
     var raio := _espalhamento * sqrt(float(indice))
-    var recuo := folga_atras + _raio_maximo()
     return Vector3(
         # O clamp por corpo e rede de seguranca, para o caso de a formacao
         # ficar mais larga que a propria pista.
         clampf(centro.x + cos(angulo) * raio, -meia_largura_util, meia_largura_util),
         altura,
-        centro.z + sin(angulo) * raio + recuo
+        centro.z + sin(angulo) * raio + _recuo
     )
 
 
-## Ate onde a formacao chega, a partir do centro dela.
-##
-## Conta os corpos que existem AGORA, nao o teto. Usando o teto, um cordao de
-## quatro guerreiros reservava espaco para quarenta e cinco e ficava cinco
-## unidades atras do lider, com um buraco no meio.
+## Ate onde a formacao chega de lado, a partir do centro dela.
 func _raio_maximo() -> float:
     return _espalhamento * sqrt(float(maxi(_visiveis - 1, 0)))
+
+
+## Recalcula o quanto o grupo recua, para o corpo da frente ficar exatamente
+## `folga_atras` atras do lider.
+##
+## MEDE qual corpo esta mais adiantado, em vez de supor que algum caia bem na
+## frente da formacao. Com o angulo aureo isso nao acontece: nenhum indice
+## tende a cair em seno igual a menos um, entao assumir isso deixava o cordao
+## sobrando varias unidades para tras do que foi pedido.
+func _recalcular_recuo() -> void:
+    var mais_adiantado := 0.0
+    for i in _visiveis:
+        var angulo := float(i) * ANGULO_AUREO
+        var raio := _espalhamento * sqrt(float(i))
+        mais_adiantado = minf(mais_adiantado, sin(angulo) * raio)
+    _recuo = folga_atras - mais_adiantado
 
 
 ## Tranco de escala quando um guerreiro entra, para a mudanca ser visivel.

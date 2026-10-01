@@ -159,8 +159,8 @@ reposiciona a linha de chegada e devolve a tela de vitoria. Zero deixa infinito.
   deveria acontecer.
 
 **Escala do cordao (implementada em 01/10).** Os guerreiros comecam do tamanho
-do lider e encolhem conforme o cordao cresce, de 1.0 ate 0.55 ao longo dos
-primeiros 40 corpos. O teto subiu de 25 para 45.
+do lider e encolhem conforme o cordao cresce, de 1.0 ate 0.45 ao longo dos
+primeiros 70 corpos. O teto subiu de 25 para 80.
 
 - **Encolher e o meio, nao o fim.** Corpo menor le como "mais longe", nao como
   "mais". O ganho e caber mais corpo na mesma largura de ponte, e por isso ha
@@ -168,7 +168,12 @@ primeiros 40 corpos. O teto subiu de 25 para 45.
 - **O espacamento acompanha a escala.** Fixo, ou sobraria buraco com os corpos
   pequenos, ou eles se interpenetrariam no tamanho cheio.
 - Medido: distancia minima entre vizinhos igual ao espacamento em todas as
-  contagens, de 4 a 300, e nada saindo da ponte.
+  contagens, de 4 a 500, e nada saindo da ponte.
+- **A folga ate o lider e medida, nao suposta.** `_recalcular_recuo()` procura
+  qual corpo esta mais adiantado na espiral e recua o grupo por essa medida.
+  Supor que algum corpo cai bem na frente da formacao esta errado: com o
+  angulo aureo nenhum indice tende a seno igual a menos um, e o cordao sobrava
+  varias unidades atras do que havia sido pedido.
 
 **HUD com acabamento:** o layout atual e funcional (cantos livres, centro
 limpo, separador de milhar) mas cru. Bruno quer um HUD bonito, e decidiu fazer
