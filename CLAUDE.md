@@ -158,22 +158,17 @@ reposiciona a linha de chegada e devolve a tela de vitoria. Zero deixa infinito.
 - **Pendente:** o que acontece quando nenhum lado e pagavel. Bruno acha que nao
   deveria acontecer.
 
-**Escala do cordao (ideia de Bruno, 24/09, a fazer DEPOIS da modelagem):** o
-mestre fica com tamanho fixo e os guerreiros do cordao encolhem conforme a
-contagem sobe.
+**Escala do cordao (implementada em 01/10).** Os guerreiros comecam do tamanho
+do lider e encolhem conforme o cordao cresce, de 1.0 ate 0.55 ao longo dos
+primeiros 40 corpos. O teto subiu de 25 para 45.
 
 - **Encolher e o meio, nao o fim.** Corpo menor le como "mais longe", nao como
-  "mais": e assim que a percepcao funciona. Encolhido demais, o grupo parece se
-  afastar e o asset cultural some justamente quando deveria impressionar.
-- O ganho real e **caber mais corpo na mesma largura de ponte**. Entao a escala
-  deve vir acompanhada de `MAX_VISIVEL` subindo, de 25 para uns 45. O efeito
-  combinado e multidao mais densa, nao mais distante.
-- **Piso na escala**, algo como 1.0 ate 0.7, nunca menos.
-- O mestre com tamanho fixo tambem acerta a hierarquia visual, que e o papel
-  dele no folguedo: lidera o cordao.
-- **Fazer so depois que o guerreiro estiver modelado.** Com capsula, o ponto em
-  que um corpo "some" e chute: depende de silhueta, paleta e chapeu, que ainda
-  nao existem.
+  "mais". O ganho e caber mais corpo na mesma largura de ponte, e por isso ha
+  piso na escala: sem ele o grupo pareceria se afastar em vez de crescer.
+- **O espacamento acompanha a escala.** Fixo, ou sobraria buraco com os corpos
+  pequenos, ou eles se interpenetrariam no tamanho cheio.
+- Medido: distancia minima entre vizinhos igual ao espacamento em todas as
+  contagens, de 4 a 300, e nada saindo da ponte.
 
 **HUD com acabamento:** o layout atual e funcional (cantos livres, centro
 limpo, separador de milhar) mas cru. Bruno quer um HUD bonito, e decidiu fazer

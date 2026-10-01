@@ -7,17 +7,24 @@ extends Node3D
 ## MultiMeshInstance3D, que e barato de desenhar mas nao faz animacao
 ## esqueletica, e no D11 os guerreiros precisam andar.
 
-const MAX_VISIVEL: int = 25
+const MAX_VISIVEL: int = 45
 ## Angulo aureo. Distribui pontos num disco sem alinhamentos nem sobreposicao,
 ## que e o que faz o grupo parecer multidao e nao grade.
 const ANGULO_AUREO: float = 2.39996323
 
 @export var lider_path: NodePath = ^"../Player"
 @export var cena_guerreiro: PackedScene
-## Distancia entre vizinhos na espiral. Precisa ser maior que a maior medida
-## do corpo. O guerreiro e uma CAIXA de 0.52 por 0.35, entao na diagonal ele
-## ocupa 0.63, e nao os 0.52 da largura. Era 0.55 quando o corpo era capsula.
-@export var espalhamento_base: float = 0.66
+## Distancia entre vizinhos na espiral, no tamanho cheio. Precisa cobrir a
+## maior medida do corpo: o guerreiro e uma CAIXA de 0.67 por 0.35, entao na
+## diagonal ele ocupa 0.76, e nao os 0.67 da largura.
+@export var espalhamento_base: float = 0.76
+## Tamanho do guerreiro com o cordao pequeno. 1.0 e o tamanho do lider.
+@export var escala_maxima: float = 1.0
+## Tamanho com o cordao cheio. Nao desce mais que isso: corpo pequeno demais
+## le como "mais longe", nao como "mais gente", e o asset cultural some.
+@export var escala_minima: float = 0.55
+## Em quantos corpos a escala chega ao minimo.
+@export var corpos_para_escala_minima: int = 40
 ## Quanto o cordao fica atras do lider.
 @export var recuo: float = 3.0
 ## Altura da vaga. Com o modelo, a origem fica nos pes, entao a vaga e um
@@ -32,7 +39,8 @@ const ANGULO_AUREO: float = 2.39996323
 var _lider: Node3D = null
 var _corpos: Array[Node3D] = []
 var _visiveis: int = 0
-var _espalhamento: float = 0.55
+var _espalhamento: float = 0.76
+var _escala_corpo: float = 1.0
 
 
 func _ready() -> void:
@@ -74,12 +82,16 @@ func _on_contagem_mudou(_anterior: int, novo: int) -> void:
 func _aplicar(contagem: int, instantaneo: bool) -> void:
     _visiveis = clampi(contagem, 0, MAX_VISIVEL)
 
-    # A contagem entra no raio pela raiz: dobrar o cordao nao dobra a largura,
-    # so a area. E o mesmo que o olho espera de gente se juntando.
-    var escala := sqrt(float(maxi(contagem, 1))) / sqrt(float(MAX_VISIVEL))
-    # O piso e 1.0 de proposito: espalhamento_base ja vale o diametro do
-    # corpo, entao encolher abaixo disso volta a sobrepor os guerreiros.
-    _espalhamento = espalhamento_base * clampf(escala, 1.0, 1.25)
+    # Os guerreiros encolhem conforme o cordao cresce. Encolher aqui e MEIO,
+    # nao fim: o ganho e caber mais corpo na mesma largura de ponte. Por isso
+    # ha piso na escala, senao o grupo pareceria se afastar em vez de crescer.
+    var cheio := float(maxi(corpos_para_escala_minima - 1, 1))
+    var quanto := clampf(float(_visiveis - 1) / cheio, 0.0, 1.0)
+    _escala_corpo = lerpf(escala_maxima, escala_minima, quanto)
+
+    # O espacamento acompanha o tamanho do corpo. Fixo, ou sobraria buraco com
+    # os corpos pequenos, ou eles se interpenetrariam no tamanho cheio.
+    _espalhamento = espalhamento_base * _escala_corpo
 
     var centro := _centro_da_formacao()
     for i in MAX_VISIVEL:
@@ -88,10 +100,15 @@ func _aplicar(contagem: int, instantaneo: bool) -> void:
         if deve_aparecer and not corpo.visible:
             corpo.visible = true
             corpo.global_position = _vaga(i, centro)
+            corpo.scale = Vector3.ONE * _escala_corpo
             if not instantaneo:
                 _surgir(corpo)
         elif not deve_aparecer and corpo.visible:
             corpo.visible = false
+        elif deve_aparecer:
+            # Os que ja estavam na tela tambem mudam de tamanho: a escala
+            # depende de QUANTOS sao, entao ela muda para todos a cada portao.
+            corpo.scale = Vector3.ONE * _escala_corpo
 
 
 func _process(delta: float) -> void:
@@ -144,6 +161,7 @@ func _vaga(indice: int, centro: Vector3) -> Vector3:
 
 ## Tranco de escala quando um guerreiro entra, para a mudanca ser visivel.
 func _surgir(corpo: Node3D) -> void:
-    corpo.scale = Vector3.ONE * 0.2
+    var alvo := Vector3.ONE * _escala_corpo
+    corpo.scale = alvo * 0.2
     var t := create_tween()
-    t.tween_property(corpo, "scale", Vector3.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+    t.tween_property(corpo, "scale", alvo, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

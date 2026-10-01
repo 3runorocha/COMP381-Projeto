@@ -5,19 +5,23 @@ extends Node3D
 ## capacete. Girar a partir do topo e o que faz a ponta de cima ficar presa e
 ## so a de baixo se mexer, como fita de verdade.
 ##
-## O movimento tem tres partes somadas, e cada uma responde a uma coisa
-## diferente:
-##   1. um vai e vem constante, para elas nunca ficarem congeladas;
-##   2. uma inclinacao para tras que cresce com a velocidade, porque a corrida
+## O movimento tem tres partes somadas:
+##   1. uma inclinacao para tras que cresce com a velocidade, porque a corrida
 ##      nao tem teto e a 200 por hora fita nao fica na vertical;
+##   2. uma tremulacao NO MESMO EIXO da inclinacao, ou seja, a fita sobe e
+##      desce no vento;
 ##   3. um empurrao lateral contrario ao desvio do jogador, que e o que liga a
 ##      animacao ao que ele acabou de fazer no controle.
+##
+## A tremulacao era, antes, um vai e vem lateral. Ficava mecanico: varrer de um
+## lado para o outro e movimento de PENDULO, e fita ao vento nao faz isso. Ela
+## ondula na direcao em que esta sendo arrastada.
 
 @export var player_path: NodePath = ^".."
-## Amplitude do vai e vem parado, em graus.
-@export var balanco_graus: float = 6.0
-## Quantas oscilacoes por segundo.
-@export var frequencia: float = 3.2
+## Amplitude da tremulacao, em graus.
+@export var tremulacao_graus: float = 7.0
+## Quantas oscilacoes por segundo. Alta de proposito: pano treme rapido.
+@export var frequencia: float = 7.5
 ## Quanto as fitas deitam para tras na velocidade de referencia.
 @export var inclinacao_graus: float = 30.0
 ## Velocidade em que a inclinacao chega ao maximo.
@@ -41,17 +45,24 @@ func _process(delta: float) -> void:
     _t += delta
 
     var velocidade := Comum.velocidade(_player)
-    var deitar := -deg_to_rad(inclinacao_graus) * clampf(velocidade / velocidade_referencia, 0.0, 1.0)
+    var vento := clampf(velocidade / velocidade_referencia, 0.0, 1.0)
+    var deitar := -deg_to_rad(inclinacao_graus) * vento
 
     var lateral := 0.0
     if _player != null and "velocity" in _player:
         lateral = -deg_to_rad(reacao_lateral_graus) * clampf(_player.velocity.x / 10.0, -1.0, 1.0)
 
+    var meio := (float(_fitas.size()) - 1.0) * 0.5
     for i in _fitas.size():
         # Fase diferente por fita: em fase, as seis viram uma placa so.
-        var fase := float(i) * 0.7
-        var vaivem := deg_to_rad(balanco_graus) * sin(_t * frequencia + fase)
-        _fitas[i].rotation = Vector3(deitar, 0.0, vaivem + lateral)
+        var fase := float(i) * 0.9
+        # Parada, a fita ainda treme um pouco; correndo, treme muito mais.
+        var forca := 0.25 + 0.75 * vento
+        var tremer := deg_to_rad(tremulacao_graus) * forca * sin(_t * frequencia + fase)
+        # Leque fixo, nao animado: as fitas abrem levemente para fora do centro
+        # e param de parecer seis copias paralelas da mesma peca.
+        var leque := deg_to_rad(3.0) * (float(i) - meio)
+        _fitas[i].rotation = Vector3(deitar + tremer, 0.0, lateral + leque)
 
 
 ## Procura recursivamente, porque a hierarquia de um glTF importado depende de
