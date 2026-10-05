@@ -186,8 +186,11 @@ fitas. A cadência vem de `Comum.cadencia_passo()`, a mesma função que dispara
 som do passo, então o pé bate junto com o som.
 
 ## D12 · 03/10 sab · Cenário
-- [ ] Chão, laterais, céu e props de ambientação
-- [ ] Modelar os portões de verdade, no lugar dos planos
+- [x] Chão, laterais, céu e props de ambientação
+- [x] Modelar os portões de verdade, no lugar dos planos
+
+Feito em 05/10: a pista vira a orla de Maceio, com asfalto, faixas e coqueiros
+dos dois lados. Os portões ficam como estão, por decisão de Bruno.
 
 ## D13 · 04/10 dom · Áudio
 - [x] `AudioStreamPlayer` para a música de fundo, em loop, esperando o arquivo

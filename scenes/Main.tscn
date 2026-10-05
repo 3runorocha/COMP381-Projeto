@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/jogador/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/jogador/camera_follow.gd" id="2_camera"]
@@ -9,10 +9,15 @@
 [ext_resource type="PackedScene" path="res://scenes/interface/UI.tscn" id="7_ui"]
 [ext_resource type="Script" path="res://scripts/pista/ground_follow.gd" id="8_chao"]
 [ext_resource type="Script" path="res://scripts/pista/level_generator.gd" id="9_gerador"]
+[ext_resource type="Shader" path="res://shaders/asfalto.gdshader" id="10_asfalto"]
+[ext_resource type="PackedScene" path="res://assets/coqueiro.glb" id="11_coqueiro"]
+[ext_resource type="Script" path="res://scripts/pista/roadside.gd" id="12_orla"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
-sky_horizon_color = Color(0.65, 0.65, 0.68, 1)
-ground_horizon_color = Color(0.65, 0.65, 0.68, 1)
+sky_top_color = Color(0.21, 0.5, 0.86, 1)
+sky_horizon_color = Color(0.72, 0.85, 0.93, 1)
+ground_horizon_color = Color(0.72, 0.85, 0.93, 1)
+ground_bottom_color = Color(0.6, 0.72, 0.78, 1)
 
 [sub_resource type="Sky" id="Ceu"]
 sky_material = SubResource("Ceu_mat")
@@ -24,16 +29,15 @@ ambient_light_source = 3
 reflected_light_source = 2
 tonemap_mode = 2
 fog_enabled = true
-fog_light_color = Color(0.66, 0.66, 0.69, 1)
+fog_light_color = Color(0.74, 0.85, 0.92, 1)
 fog_density = 0.0075
 fog_sky_affect = 0.25
 
-[sub_resource type="StandardMaterial3D" id="Mat_pista"]
-albedo_color = Color(0.82, 0.78, 0.7, 1)
-roughness = 0.9
+[sub_resource type="ShaderMaterial" id="Mat_pista"]
+shader = ExtResource("10_asfalto")
 
 [sub_resource type="StandardMaterial3D" id="Mat_borda"]
-albedo_color = Color(0.35, 0.5, 0.42, 1)
+albedo_color = Color(0.11, 0.52, 0.29, 1)
 roughness = 0.95
 
 [node name="Main" type="Node3D"]
@@ -67,6 +71,10 @@ material = SubResource("Mat_borda")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 0.1, -125)
 size = Vector3(0.8, 0.6, 340)
 material = SubResource("Mat_borda")
+
+[node name="Orla" type="Node3D" parent="."]
+script = ExtResource("12_orla")
+cena_coqueiro = ExtResource("11_coqueiro")
 
 [node name="FinishLine" parent="." instance=ExtResource("6_fim")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -240)
