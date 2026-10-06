@@ -9,12 +9,19 @@ extends Node3D
 ## jogador, entao nada pode ficar preso a ele.
 
 @export var cena_coqueiro: PackedScene
-## Quantos coqueiros por lado ficam vivos ao mesmo tempo.
-@export var por_lado: int = 14
-## Distancia entre um coqueiro e o seguinte, no mesmo lado.
+## Quantos coqueiros por fileira ficam vivos ao mesmo tempo.
+@export var por_fileira: int = 14
+## Distancia entre um coqueiro e o seguinte, na mesma fileira.
 @export var espacamento: float = 13.0
-## Quanto eles ficam afastados do centro da pista. A pista util vai ate 6.4.
+## Afastamento da fileira que fica junto da ciclofaixa. A pista util vai ate 6.4.
 @export var afastamento: float = 8.2
+## Fileiras extras SO do lado do gramado.
+##
+## A orla nao e simetrica: do lado do mar e praia aberta, com a fileira da
+## calcada e mais nada, e do lado de terra ha mata. Espelhar os dois lados
+## apagaria justamente o que faz um lado ser praia e o outro nao.
+@export var fileiras_grama: int = 2
+@export var passo_entre_fileiras: float = 7.0
 
 var _player: Node3D = null
 var _coqueiros: Array[Node3D] = []
@@ -29,17 +36,25 @@ func _ready() -> void:
         push_warning("roadside: cena_coqueiro nao definida.")
         return
 
-    _alcance = float(por_lado) * espacamento
-    for lado in [-1.0, 1.0]:
-        for i in por_lado:
+    _alcance = float(por_fileira) * espacamento
+
+    # Lado do mar: so a fileira da calcada. Lado do gramado: essa mais as
+    # extras, cada uma mais afastada.
+    var fileiras: Array[float] = [-afastamento, afastamento]
+    for k in fileiras_grama:
+        fileiras.append(afastamento + float(k + 1) * passo_entre_fileiras)
+
+    for f in fileiras.size():
+        var x_base: float = fileiras[f]
+        for i in por_fileira:
             var arvore: Node3D = cena_coqueiro.instantiate()
             add_child(arvore)
             _variar(arvore)
-            # Os dois lados saem defasados de meio passo, senao os coqueiros
-            # ficam em pares simetricos e a orla vira um corredor de portico.
-            var recuo := 0.0 if lado < 0.0 else espacamento * 0.5
+            # Cada fileira sai defasada da anterior, senao os coqueiros ficam
+            # em pares alinhados e a orla vira um corredor de portico.
+            var recuo := espacamento * (float(f) / float(fileiras.size()))
             arvore.position = Vector3(
-                lado * afastamento + _rng.randf_range(-0.5, 0.5),
+                x_base + _rng.randf_range(-0.7, 0.7),
                 0.0,
                 -float(i) * espacamento - recuo)
             _coqueiros.append(arvore)

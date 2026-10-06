@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/jogador/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/jogador/camera_follow.gd" id="2_camera"]
@@ -10,14 +10,12 @@
 [ext_resource type="Script" path="res://scripts/pista/ground_follow.gd" id="8_chao"]
 [ext_resource type="Script" path="res://scripts/pista/level_generator.gd" id="9_gerador"]
 [ext_resource type="Shader" path="res://shaders/asfalto.gdshader" id="10_asfalto"]
+[ext_resource type="Shader" path="res://shaders/ceu.gdshader" id="13_ceu"]
 [ext_resource type="PackedScene" path="res://assets/coqueiro.glb" id="11_coqueiro"]
 [ext_resource type="Script" path="res://scripts/pista/roadside.gd" id="12_orla"]
 
-[sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
-sky_top_color = Color(0.21, 0.5, 0.86, 1)
-sky_horizon_color = Color(0.72, 0.85, 0.93, 1)
-ground_horizon_color = Color(0.72, 0.85, 0.93, 1)
-ground_bottom_color = Color(0.6, 0.72, 0.78, 1)
+[sub_resource type="ShaderMaterial" id="Ceu_mat"]
+shader = ExtResource("13_ceu")
 
 [sub_resource type="Sky" id="Ceu"]
 sky_material = SubResource("Ceu_mat")
@@ -30,8 +28,8 @@ reflected_light_source = 2
 tonemap_mode = 2
 fog_enabled = true
 fog_light_color = Color(0.74, 0.85, 0.92, 1)
-fog_density = 0.0075
-fog_sky_affect = 0.25
+fog_density = 0.005
+fog_sky_affect = 0.08
 
 [sub_resource type="ShaderMaterial" id="Mat_pista"]
 shader = ExtResource("10_asfalto")
@@ -41,7 +39,7 @@ albedo_color = Color(0.29, 0.56, 0.24, 1)
 roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="Mat_areia"]
-albedo_color = Color(0.92, 0.86, 0.71, 1)
+albedo_color = Color(0.94, 0.82, 0.48, 1)
 roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="Mat_mar"]
