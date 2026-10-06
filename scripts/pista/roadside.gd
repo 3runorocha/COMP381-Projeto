@@ -32,7 +32,16 @@ extends Node3D
 ## instante, logo apos cada salto, com cobertura zero atras do jogador.
 @export var cauda: float = 195.0
 ## Quanto o tapete se estende para a FRENTE.
-@export var alcance: float = 300.0
+##
+## Precisa ficar alem do alcance VISIVEL, nao so alem do que o jogador
+## alcanca. O salto preserva o interior do tapete, mas avanca a borda da
+## frente um periodo inteiro, e nessa faixa nascem coqueiros que antes nao
+## existiam. Medido com 300: cem coqueiros apareciam de uma vez entre 320 e
+## 450 da camera, onde a neblina ainda deixa passar de 10 a 20 por cento.
+##
+## Com neblina em 0.005, a 700 so passa 3 por cento, e o nascimento deixa de
+## ser percebido.
+@export var alcance: float = 700.0
 ## Distancia entre um coqueiro e o seguinte, na mesma fileira.
 @export var espacamento: float = 13.0
 ## Afastamento da fileira que fica junto da ciclofaixa. A pista util vai ate 6.4.

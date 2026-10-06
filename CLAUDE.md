@@ -25,55 +25,56 @@ sirva só ao critério contínuo ficam para a **segunda parte do projeto**. Na
 prática isso desarma o D14 da sprint e vale como regra geral: nada de polir o
 que não foi pedido enquanto houver item obrigatório em aberto.
 
-## Piscada no cenario: em aberto, com plano (05/10/2026)
+## Piscada no cenario: causa achada e reduzida (06/10/2026)
 
-Bruno ve uma piscada rapida durante a corrida. Tres causas REAIS ja foram
-encontradas e corrigidas, e o sintoma continua. Isso nao e azar: e sinal de que
-o metodo estava errado. Eu vinha levantando hipotese, corrigindo e esperando
-ele dizer se melhorou. **Comecar pela auditoria, nao por mais uma hipotese.**
+A auditoria do passo 1 funcionou e a causa ficou provada, nao suposta.
 
-### Ja corrigido, nao refazer
+**Nao era transparencia nem sombra.** Era o tapete de coqueiros. Ele e
+periodico no INTERIOR, entao o salto de um periodo cai sobre geometria
+identica ali. Mas a borda da frente avanca um periodo inteiro junto, e nessa
+faixa nascem coqueiros que antes nao existiam.
 
-1. **Coqueiro reciclado perto da camera.** O gatilho era 13 atras do jogador, e
-   a camera fica 8 atras dele: o coqueiro era reposicionado a 5 da camera. Ele
-   proprio nao aparecia, mas a sombra dele, de 9 de altura, continuava no
-   quadro. Resolvido primeiro afastando o gatilho, depois de vez trocando a
-   reciclagem individual por um tapete periodico.
-2. **Cenario reciclado objeto a objeto.** Substituido por tapete que se repete:
-   nada se move em relacao a nada, so o no inteiro salta um periodo exato sobre
-   geometria identica.
-3. **Par de portoes nascendo a 166 unidades**, dentro do campo de visao. Passou
-   a entrar com fade de 0.65 s.
+Medido comparando o conjunto de transformacoes antes e depois de um salto,
+restrito ao que estava a frente da camera: **zero sumiam e 100 apareciam de
+uma vez**, entre 320 e 450 unidades, onde a neblina ainda deixa passar de 10 a
+20 por cento.
 
-### Plano para a proxima sessao
+**Correcao:** `alcance` do tapete sobe de 300 para 700. Os 100 continuam
+nascendo, mas agora entre 710 e 839, onde passa de 2 a 3 por cento. A piscada
+cai cerca de seis vezes, mas **nao e eliminada**: neblina exponencial nunca
+chega a zero.
 
-**Passo 1, auditar em vez de supor.** Script de depuracao que, a cada quadro,
-registre todo no que mudou de estado bruscamente (pulou mais de 5 unidades,
-trocou visibilidade, mudou escala, mudou alfa) E teste se ele estava dentro do
-frustum da camera naquele instante. Rodar um minuto e imprimir so os eventos
-que ocorreram na tela. Se a lista vier vazia, o problema nao e geometria
-aparecendo, e renderizacao, e o caminho passa a ser outro.
+Custo: 690 coqueiros contra 390. Medido com 400 guerreiros na tela junto, 145
+quadros por segundo em headless.
 
-**Passo 2, suspeitos ainda nao tocados, em ordem de aposta.**
+### O que ainda pode valer
 
-- **Transparencia dos portoes.** Os paineis tem alfa 0.45. Objeto transparente
-  nao escreve profundidade e e ordenado por distancia, objeto a objeto: quando
-  um par novo nasce, a ordem de desenho de todos os transparentes pode trocar
-  por um quadro. **E a unica causa que explica a piscada acontecer no FUNDO e
-  no momento em que algo novo entra em cena, sem que o objeto novo seja o que
-  pisca.** Painel opaco elimina a classe inteira.
-- **Limite da sombra direcional, em 55 unidades.** Todo objeto que cruza essa
-  linha ganha ou perde sombra de uma vez, e ha 390 coqueiros e ate 400
-  guerreiros cruzando o tempo todo.
+- **Zerar de vez** exigiria plano de corte da camera logo antes de onde eles
+  nascem. Hoje isso conflita com o proximo item.
+- **A neblina esconde os portoes em alta velocidade.** O espacamento e
+  `velocidade x 2 s`, entao a 300 de velocidade o proximo portao esta a 600, e
+  a neblina deixa passar so 5 por cento ali. A regra dos 2 segundos de leitura
+  esta sendo derrotada pela neblina, e isso e problema de JOGO, nao de
+  acabamento. Afrouxar a neblina resolve a leitura e piora a piscada; sao o
+  mesmo botao puxado para lados opostos.
 
-**Passo 3, capturar a evidencia.** Gravar e parar no quadro, ou pausar no
-instante em que a piscada aparece, para olhar em vez de deduzir.
+### Metodo que funcionou, vale repetir
+
+Instrumentar TUDO que muda de estado e cruzar com o frustum, em vez de testar
+um suspeito por vez. As tres correcoes anteriores eram causas reais, mas eu
+achava cada uma por hipotese e so sabia se tinha acertado perguntando a Bruno.
+A auditoria deu a resposta em uma rodada.
+
+Um cuidado aprendido no caminho: a auditoria primeiro acusou o tapete por ele
+MOVER nos, o que nao prova que a imagem mude. Foi preciso um segundo teste,
+comparando o conjunto de transformacoes visiveis antes e depois, para separar
+"no se moveu" de "imagem mudou".
 
 ## Pendencias abertas (atualizado em 01/10/2026)
 
 Lista curta do que falta. Os detalhes de cada item estao nas secoes adiante.
 
-0. **Piscada no cenario.** Em aberto, com plano na secao acima.
+0. **Piscada no cenario.** Causa achada e reduzida seis vezes. Nao zerada.
 1. **HUD com acabamento.** O layout atual funciona (cantos livres, centro limpo,
    separador de milhar) mas e cru. Bruno quis deixar para depois da modelagem,
    que agora esta feita.
