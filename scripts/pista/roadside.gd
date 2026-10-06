@@ -10,7 +10,10 @@ extends Node3D
 
 @export var cena_coqueiro: PackedScene
 ## Quantos coqueiros por fileira ficam vivos ao mesmo tempo.
-@export var por_fileira: int = 14
+##
+## Subiu junto com a margem de reciclagem: parte da fileira passa a ser gasta
+## atras do jogador, e sem compensar, o fim dela entraria no campo de visao.
+@export var por_fileira: int = 19
 ## Distancia entre um coqueiro e o seguinte, na mesma fileira.
 @export var espacamento: float = 13.0
 ## Afastamento da fileira que fica junto da ciclofaixa. A pista util vai ate 6.4.
@@ -25,6 +28,13 @@ extends Node3D
 ## x = 46. As copas se sobrepoem de proposito: separadas o bastante para nao
 ## se tocarem, a mata vira pomar enfileirado.
 @export var passo_entre_fileiras: float = 4.4
+## Quanto o coqueiro precisa ficar para tras antes de ser reciclado.
+##
+## Nao basta estar atras da CAMERA. O coqueiro tem 9 de altura e o sol vem de
+## cima e de lado, entao a sombra dele continua caindo dentro do quadro bem
+## depois de ele proprio ter saido. Reciclando cedo demais, a sombra some de
+## repente e o tamanho muda no mesmo instante, e isso aparece como piscada.
+@export var margem_atras: float = 48.0
 
 var _player: Node3D = null
 var _coqueiros: Array[Node3D] = []
@@ -70,7 +80,7 @@ func _process(_delta: float) -> void:
     # anda em degraus de 60 Hz e isso apareceria como tranco no cenario.
     var z := Comum.posicao_suave(_player).z
     for arvore in _coqueiros:
-        if arvore.global_position.z > z + espacamento:
+        if arvore.global_position.z > z + margem_atras:
             arvore.global_position.z -= _alcance
             _variar(arvore)
 
