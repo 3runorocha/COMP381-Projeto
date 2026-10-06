@@ -45,6 +45,12 @@ func ajustar_gatilho(profundidade: float) -> void:
         portao.ajustar_gatilho(profundidade)
 
 
+## Faz os dois lados aparecerem desvanecendo.
+func surgir() -> void:
+    for portao in _portoes():
+        portao.surgir()
+
+
 ## Devolve os dois lados ao estado acionavel.
 func rearmar() -> void:
     for portao in _portoes():

@@ -21,6 +21,8 @@ const COR_POSITIVA := Color(0.18, 0.72, 0.35)
 const COR_NEGATIVA := Color(0.85, 0.24, 0.2)
 
 var _consumido: bool = false
+var _material: StandardMaterial3D = null
+var _fade: Tween = null
 
 @onready var _placa: Label3D = $Placa
 @onready var _painel: MeshInstance3D = $Painel
@@ -48,6 +50,26 @@ func ajustar_gatilho(profundidade: float) -> void:
     var forma := $Colisao.shape as BoxShape3D
     if forma != null:
         forma.size.z = maxf(profundidade, 3.0)
+
+
+## Faz o portao aparecer desvanecendo, em vez de surgir de uma vez.
+##
+## Reciclar um portao o teleporta para a frente da pista, e com a neblina atual
+## ele nasce ainda dentro do campo de visao: aparecia como uma piscada no
+## fundo. Afastar o nascimento resolveria, mas custaria lookahead, e lookahead
+## maior piora a calibragem dos valores do portao, que ja esta abaixo do alvo.
+func surgir(duracao: float = 0.65) -> void:
+    if _material == null or _placa == null:
+        return
+    if _fade != null and _fade.is_valid():
+        _fade.kill()
+    var opaco := _material.albedo_color
+    _material.albedo_color.a = 0.0
+    _placa.modulate.a = 0.0
+    _fade = create_tween()
+    _fade.set_parallel(true)
+    _fade.tween_property(_material, "albedo_color:a", opaco.a, duracao)
+    _fade.tween_property(_placa, "modulate:a", 1.0, duracao)
 
 
 ## Volta a poder ser acionado, depois de reciclado para a frente da pista.
@@ -82,6 +104,9 @@ func _atualizar_visual() -> void:
     if _painel != null:
         var material := _painel.get_active_material(0)
         if material is StandardMaterial3D:
-            var copia: StandardMaterial3D = material.duplicate()
-            copia.albedo_color = Color(cor.r, cor.g, cor.b, 0.45)
-            _painel.material_override = copia
+            # Guardado porque o fade de surgimento precisa mexer no alfa dele,
+            # e cada portao tem a sua copia justamente para nao mexer no alfa
+            # de todos ao mesmo tempo.
+            _material = material.duplicate()
+            _material.albedo_color = Color(cor.r, cor.g, cor.b, 0.45)
+            _painel.material_override = _material

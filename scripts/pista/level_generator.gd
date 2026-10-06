@@ -93,6 +93,9 @@ func _reciclar(par: Node3D) -> void:
     par.rearmar()
     _posicionar_a_frente(par)
     _decidir(par)
+    # Depois de decidir, nao antes: o fade mexe no alfa do material, e decidir
+    # e quem troca a cor do painel.
+    par.surgir()
     _fila.append(par)
 
 
