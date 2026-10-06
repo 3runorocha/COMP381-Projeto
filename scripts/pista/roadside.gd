@@ -20,8 +20,11 @@ extends Node3D
 ## A orla nao e simetrica: do lado do mar e praia aberta, com a fileira da
 ## calcada e mais nada, e do lado de terra ha mata. Espelhar os dois lados
 ## apagaria justamente o que faz um lado ser praia e o outro nao.
-@export var fileiras_grama: int = 2
-@export var passo_entre_fileiras: float = 7.0
+@export var fileiras_grama: int = 8
+## Com nove fileiras, o passo precisa caber dentro do gramado, que vai ate
+## x = 46. As copas se sobrepoem de proposito: separadas o bastante para nao
+## se tocarem, a mata vira pomar enfileirado.
+@export var passo_entre_fileiras: float = 4.4
 
 var _player: Node3D = null
 var _coqueiros: Array[Node3D] = []

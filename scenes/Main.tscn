@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/jogador/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/jogador/camera_follow.gd" id="2_camera"]
@@ -10,12 +10,15 @@
 [ext_resource type="Script" path="res://scripts/pista/ground_follow.gd" id="8_chao"]
 [ext_resource type="Script" path="res://scripts/pista/level_generator.gd" id="9_gerador"]
 [ext_resource type="Shader" path="res://shaders/asfalto.gdshader" id="10_asfalto"]
-[ext_resource type="Shader" path="res://shaders/ceu.gdshader" id="13_ceu"]
 [ext_resource type="PackedScene" path="res://assets/coqueiro.glb" id="11_coqueiro"]
 [ext_resource type="Script" path="res://scripts/pista/roadside.gd" id="12_orla"]
 
-[sub_resource type="ShaderMaterial" id="Ceu_mat"]
-shader = ExtResource("13_ceu")
+[sub_resource type="ProceduralSkyMaterial" id="Ceu_mat"]
+sky_top_color = Color(0.28, 0.36, 0.62, 1)
+sky_horizon_color = Color(0.97, 0.72, 0.47, 1)
+sky_curve = 0.18
+ground_horizon_color = Color(0.97, 0.72, 0.47, 1)
+ground_bottom_color = Color(0.62, 0.55, 0.52, 1)
 
 [sub_resource type="Sky" id="Ceu"]
 sky_material = SubResource("Ceu_mat")
@@ -27,7 +30,7 @@ ambient_light_source = 3
 reflected_light_source = 2
 tonemap_mode = 2
 fog_enabled = true
-fog_light_color = Color(0.74, 0.85, 0.92, 1)
+fog_light_color = Color(0.95, 0.78, 0.6, 1)
 fog_density = 0.005
 fog_sky_affect = 0.08
 
@@ -58,6 +61,7 @@ environment = SubResource("Ambiente")
 
 [node name="Sol" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 14, 0)
+light_color = Color(1, 0.93, 0.83, 1)
 light_energy = 1.1
 shadow_enabled = true
 directional_shadow_max_distance = 55.0
