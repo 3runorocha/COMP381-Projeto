@@ -39,10 +39,22 @@ restrito ao que estava a frente da camera: **zero sumiam e 100 apareciam de
 uma vez**, entre 320 e 450 unidades, onde a neblina ainda deixa passar de 10 a
 20 por cento.
 
-**Correcao:** `alcance` do tapete sobe de 300 para 700. Os 100 continuam
-nascendo, mas agora entre 710 e 839, onde passa de 2 a 3 por cento. A piscada
-cai cerca de seis vezes, mas **nao e eliminada**: neblina exponencial nunca
-chega a zero.
+**Primeira correcao, insuficiente:** `alcance` do tapete sobe de 300 para 700,
+e os 100 passam a nascer entre 710 e 839, onde a neblina deixa passar de 2 a 3
+por cento. Reduziu umas seis vezes e Bruno **continuou vendo**.
+
+**O que isso ensinou:** o problema nao e o quanto cada coqueiro aparece, e cem
+aparecerem no MESMO quadro. Mudanca correlacionada e detectada pelo olho mesmo
+com 2 por cento de contraste. Baixar contraste nao resolve; e preciso que o
+alfa seja ZERO no nascimento.
+
+**Correcao que fecha:** `distance_fade` no material do coqueiro, somindo por
+completo em 660, enquanto o nascimento acontece em 710. Nasce invisivel, e
+quantos nascem de uma vez deixa de importar.
+
+O modo e dither por pixel, nao alfa: alfa de verdade entraria na fila dos
+transparentes, ordenada objeto a objeto, e isso custa caro com centenas de
+pecas. Dither resolve no proprio pixel e continua escrevendo profundidade.
 
 Custo: 690 coqueiros contra 390. Medido com 400 guerreiros na tela junto, 145
 quadros por segundo em headless.

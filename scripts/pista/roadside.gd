@@ -53,6 +53,16 @@ extends Node3D
 ## apagaria justamente o que faz um lado ser praia e o outro nao.
 @export var fileiras_grama: int = 8
 @export var passo_entre_fileiras: float = 4.4
+## Distancia em que o coqueiro termina de sumir.
+##
+## Precisa ser MENOR que `alcance`, para o coqueiro nascer com alfa zero e nao
+## com alfa baixo. Reduzir a visibilidade no nascimento nao bastou: cem deles
+## aparecendo no MESMO quadro e mudanca correlacionada, e o olho acusa isso
+## mesmo com 2 por cento de contraste. Com o sumico completo antes da borda,
+## o numero de coqueiros que nascem deixa de importar.
+@export var distancia_sumico: float = 660.0
+## Em quantas unidades antes disso ele comeca a sumir.
+@export var faixa_sumico: float = 160.0
 
 var _player: Node3D = null
 var _rng := RandomNumberGenerator.new()
@@ -86,6 +96,7 @@ func _process(_delta: float) -> void:
 ## andar um periodo, cada vaga esta ocupada por um coqueiro igual ao que
 ## ocupava aquele ponto antes.
 func _plantar() -> void:
+    var materiais := _materiais_que_somem()
     var por_periodo := int(round(periodo / espacamento))
     var vagas := int(ceil((cauda + alcance) / espacamento))
 
@@ -117,3 +128,50 @@ func _plantar() -> void:
                 cauda - float(i) * espacamento - recuo)
             arvore.rotation.y = giros[k]
             arvore.scale = Vector3.ONE * tamanhos[k]
+            _aplicar_sumico(arvore, materiais)
+
+
+## Materiais do coqueiro com sumico por distancia, criados UMA vez.
+##
+## Uma copia so, compartilhada por todos: sao centenas de coqueiros usando a
+## mesma malha, e duplicar material por instancia desperdicaria memoria sem
+## mudar nada na tela.
+##
+## O modo e dither por pixel, nao alfa: alfa de verdade entraria na fila dos
+## transparentes, que e ordenada objeto a objeto e custa caro com centenas de
+## pecas. Dither resolve no proprio pixel e continua escrevendo profundidade.
+func _materiais_que_somem() -> Array[Material]:
+    var modelo: Node3D = cena_coqueiro.instantiate()
+    var malha := _achar_malha(modelo)
+    var saida: Array[Material] = []
+    if malha != null:
+        for i in malha.mesh.get_surface_count():
+            var base := malha.mesh.surface_get_material(i)
+            if base is StandardMaterial3D:
+                var copia: StandardMaterial3D = base.duplicate()
+                copia.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER
+                copia.distance_fade_max_distance = distancia_sumico
+                copia.distance_fade_min_distance = distancia_sumico - faixa_sumico
+                saida.append(copia)
+            else:
+                saida.append(base)
+    modelo.queue_free()
+    return saida
+
+
+func _aplicar_sumico(arvore: Node3D, materiais: Array[Material]) -> void:
+    var malha := _achar_malha(arvore)
+    if malha == null:
+        return
+    for i in mini(materiais.size(), malha.get_surface_override_material_count()):
+        malha.set_surface_override_material(i, materiais[i])
+
+
+func _achar_malha(no: Node) -> MeshInstance3D:
+    for f in no.get_children():
+        if f is MeshInstance3D:
+            return f
+        var r := _achar_malha(f)
+        if r != null:
+            return r
+    return null
