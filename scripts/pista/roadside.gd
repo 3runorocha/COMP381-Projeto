@@ -1,19 +1,38 @@
 extends Node3D
-## Coqueiros dos dois lados da orla, reciclados como os portoes.
+## Coqueiros da orla, em trecho que se repete.
 ##
 ## Nao e so enfeite. Sem nada passando de lado, o jogador nao tem referencial
 ## para perceber velocidade, e a escalada do jogo, que e o coracao da
-## dificuldade, fica invisivel. Os coqueiros resolvem isso.
+## dificuldade, fica invisivel.
 ##
-## Reciclados pelo mesmo motivo dos portoes: o chao desliza junto com o
-## jogador, entao nada pode ficar preso a ele.
+## A versao anterior reciclava coqueiro por coqueiro, movendo cada um para a
+## frente quando ficava para tras. Isso piscava: a sombra de um coqueiro de 9
+## de altura continua caindo no quadro bem depois de ele proprio sair, e
+## reposicionar ali fazia a sombra sumir de repente. Afastar o gatilho so
+## diminuiu o problema, nao acabou com ele.
+##
+## Agora o cenario inteiro e um TRECHO que se repete. Nada se move em relacao
+## a nada: so este no desliza, em saltos de exatamente um periodo. Como os
+## trechos sao copias identicas, o salto cai sobre geometria igual a que saiu
+## do lugar, e nao existe instante em que algo apareca ou desapareca.
+##
+## Isso exige que os trechos sejam IGUAIS entre si. O sorteio de rotacao e
+## escala acontece uma vez, na montagem do primeiro, e e repetido nos demais;
+## sorteando por copia, o salto trocaria um coqueiro por outro diferente e o
+## problema voltaria com outra cara.
 
 @export var cena_coqueiro: PackedScene
-## Quantos coqueiros por fileira ficam vivos ao mesmo tempo.
+## Comprimento do trecho que se repete.
+@export var periodo: float = 130.0
+## Quanto o tapete se estende PARA TRAS do ponto de salto.
 ##
-## Subiu junto com a margem de reciclagem: parte da fileira passa a ser gasta
-## atras do jogador, e sem compensar, o fim dela entraria no campo de visao.
-@export var por_fileira: int = 19
+## Precisa ser maior que o periodo mais a folga desejada. O salto move o
+## cenario um periodo inteiro de uma vez, entao a cobertura de tras oscila
+## nessa mesma amplitude: com 130 de periodo e 130 de cauda, haveria um
+## instante, logo apos cada salto, com cobertura zero atras do jogador.
+@export var cauda: float = 195.0
+## Quanto o tapete se estende para a FRENTE.
+@export var alcance: float = 300.0
 ## Distancia entre um coqueiro e o seguinte, na mesma fileira.
 @export var espacamento: float = 13.0
 ## Afastamento da fileira que fica junto da ciclofaixa. A pista util vai ate 6.4.
@@ -24,21 +43,9 @@ extends Node3D
 ## calcada e mais nada, e do lado de terra ha mata. Espelhar os dois lados
 ## apagaria justamente o que faz um lado ser praia e o outro nao.
 @export var fileiras_grama: int = 8
-## Com nove fileiras, o passo precisa caber dentro do gramado, que vai ate
-## x = 46. As copas se sobrepoem de proposito: separadas o bastante para nao
-## se tocarem, a mata vira pomar enfileirado.
 @export var passo_entre_fileiras: float = 4.4
-## Quanto o coqueiro precisa ficar para tras antes de ser reciclado.
-##
-## Nao basta estar atras da CAMERA. O coqueiro tem 9 de altura e o sol vem de
-## cima e de lado, entao a sombra dele continua caindo dentro do quadro bem
-## depois de ele proprio ter saido. Reciclando cedo demais, a sombra some de
-## repente e o tamanho muda no mesmo instante, e isso aparece como piscada.
-@export var margem_atras: float = 48.0
 
 var _player: Node3D = null
-var _coqueiros: Array[Node3D] = []
-var _alcance: float = 0.0
 var _rng := RandomNumberGenerator.new()
 
 
@@ -48,45 +55,56 @@ func _ready() -> void:
     if cena_coqueiro == null:
         push_warning("roadside: cena_coqueiro nao definida.")
         return
-
-    _alcance = float(por_fileira) * espacamento
-
-    # Lado do mar: so a fileira da calcada. Lado do gramado: essa mais as
-    # extras, cada uma mais afastada.
-    var fileiras: Array[float] = [-afastamento, afastamento]
-    for k in fileiras_grama:
-        fileiras.append(afastamento + float(k + 1) * passo_entre_fileiras)
-
-    for f in fileiras.size():
-        var x_base: float = fileiras[f]
-        for i in por_fileira:
-            var arvore: Node3D = cena_coqueiro.instantiate()
-            add_child(arvore)
-            _variar(arvore)
-            # Cada fileira sai defasada da anterior, senao os coqueiros ficam
-            # em pares alinhados e a orla vira um corredor de portico.
-            var recuo := espacamento * (float(f) / float(fileiras.size()))
-            arvore.position = Vector3(
-                x_base + _rng.randf_range(-0.7, 0.7),
-                0.0,
-                -float(i) * espacamento - recuo)
-            _coqueiros.append(arvore)
+    _plantar()
 
 
 func _process(_delta: float) -> void:
     if _player == null:
         return
-    # Interpolada, pelo mesmo motivo da camera e do cordao: a posicao crua
-    # anda em degraus de 60 Hz e isso apareceria como tranco no cenario.
+    # Interpolada, pelo mesmo motivo da camera e do cordao: a posicao crua anda
+    # em degraus de 60 Hz, e isso apareceria como tranco no cenario inteiro.
     var z := Comum.posicao_suave(_player).z
-    for arvore in _coqueiros:
-        if arvore.global_position.z > z + margem_atras:
-            arvore.global_position.z -= _alcance
-            _variar(arvore)
+    # Salta de periodo em periodo. Deslizar continuamente faria o cenario
+    # andar junto com o jogador, que e o oposto do que se quer.
+    position.z = floorf(z / periodo) * periodo
 
 
-## Gira e redimensiona um pouco, para a fileira nao parecer copias do mesmo
-## objeto repetidas em intervalo fixo.
-func _variar(arvore: Node3D) -> void:
-    arvore.rotation.y = _rng.randf_range(0.0, TAU)
-    arvore.scale = Vector3.ONE * _rng.randf_range(0.82, 1.18)
+## Monta o tapete de coqueiros, com o sorteio repetindo a cada periodo.
+##
+## Nao ha copias de um trecho: ha uma fileira longa em que a vaga `i` e a vaga
+## `i + por_periodo` recebem o MESMO sorteio. E isso que torna o tapete
+## periodico, e e a periodicidade que faz o salto ser invisivel: depois de
+## andar um periodo, cada vaga esta ocupada por um coqueiro igual ao que
+## ocupava aquele ponto antes.
+func _plantar() -> void:
+    var por_periodo := int(round(periodo / espacamento))
+    var vagas := int(ceil((cauda + alcance) / espacamento))
+
+    var fileiras: Array[float] = [-afastamento, afastamento]
+    for k in fileiras_grama:
+        fileiras.append(afastamento + float(k + 1) * passo_entre_fileiras)
+
+    for f in fileiras.size():
+        # Sorteio de um periodo, reaproveitado ao longo de toda a fileira.
+        var desvios: Array[float] = []
+        var giros: Array[float] = []
+        var tamanhos: Array[float] = []
+        for i in por_periodo:
+            desvios.append(_rng.randf_range(-0.7, 0.7))
+            giros.append(_rng.randf_range(0.0, TAU))
+            tamanhos.append(_rng.randf_range(0.82, 1.18))
+
+        # Cada fileira sai defasada da anterior, senao os coqueiros ficam em
+        # pares alinhados e a orla vira um corredor de portico.
+        var recuo := espacamento * (float(f) / float(fileiras.size()))
+
+        for i in vagas:
+            var k: int = i % por_periodo
+            var arvore: Node3D = cena_coqueiro.instantiate()
+            add_child(arvore)
+            arvore.position = Vector3(
+                fileiras[f] + desvios[k],
+                0.0,
+                cauda - float(i) * espacamento - recuo)
+            arvore.rotation.y = giros[k]
+            arvore.scale = Vector3.ONE * tamanhos[k]
