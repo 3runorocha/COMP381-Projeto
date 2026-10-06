@@ -109,14 +109,12 @@ def construir_corpo():
     caixa("camisa", (0.0, 0.0, 0.99), (0.52, 0.30, 0.54), "vermelho")
     caixa("ombros", (0.0, 0.0, 1.20), (0.64, 0.30, 0.14), "vermelho")
 
-    # Braco esquerdo dobrado na cintura, direito solto: e a pose da referencia,
-    # sem a espada, e ja quebra a simetria do boneco.
-    caixa("braco_esq_alto", (-0.36, 0.0, 1.08), (0.14, 0.16, 0.30), "vermelho")
-    caixa("braco_esq_baixo", (-0.27, 0.0, 0.90), (0.22, 0.16, 0.14), "vermelho")
-    caixa("mao_esq", (-0.17, 0.0, 0.90), (0.11, 0.14, 0.14), "pele")
-
-    caixa("braco_dir", (0.36, 0.0, 1.02), (0.14, 0.16, 0.44), "vermelho")
-    caixa("mao_dir", (0.36, 0.0, 0.76), (0.13, 0.15, 0.13), "pele")
+    # Bracos soltos dos dois lados, para poderem balancar na corrida. A pose da
+    # referencia tem um deles na cintura, mas boneco correndo com a mao na
+    # cintura fica estranho, e o balanco vale mais que a pose parada.
+    montar_bracos(0.36, 1.22,
+                  braco=(0.14, 0.16, 0.42), braco_z=1.00,
+                  mao=(0.13, 0.15, 0.13), mao_z=0.76)
 
     caixa("pescoco", (0.0, 0.0, 1.29), (0.17, 0.17, 0.08), "pele")
     # Cabeca grande de proposito: e o que da a leitura chibi da referencia, e o
@@ -143,6 +141,28 @@ def montar_pernas(afastamento, quadril, bota, bota_z, coxa, coxa_z):
         bpy.ops.object.join()
 
         bpy.context.scene.cursor.location = (x, 0.0, quadril)
+        bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
+    bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
+
+
+## Monta os dois bracos como objetos SEPARADOS, com o pivo no ombro.
+##
+## Mesmo motivo das pernas: braco dentro da malha do corpo nao gira, e girar
+## pelo meio faria o ombro furar o torso.
+def montar_bracos(afastamento, ombro, braco, braco_z, mao, mao_z):
+    for lado, sinal in (("esq", -1.0), ("dir", 1.0)):
+        x = sinal * afastamento
+        punho = caixa("mao_" + lado, (x, 0.0, mao_z), mao, "pele")
+        membro = caixa("braco_" + lado, (x, 0.0, braco_z), braco, "vermelho")
+
+        bpy.ops.object.select_all(action="DESELECT")
+        punho.select_set(True)
+        membro.select_set(True)
+        bpy.context.view_layer.objects.active = membro
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+        bpy.ops.object.join()
+
+        bpy.context.scene.cursor.location = (x, 0.0, ombro)
         bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
     bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
 
@@ -222,7 +242,9 @@ def juntar_e_exportar():
     # precisam continuar sendo nos separados para o Godot poder balanca-las.
     bpy.ops.object.select_all(action="DESELECT")
     for obj in bpy.data.objects:
-        solto = obj.name.startswith("fita_") or obj.name.startswith("perna_")
+        solto = (obj.name.startswith("fita_")
+                 or obj.name.startswith("perna_")
+                 or obj.name.startswith("braco_"))
         if obj.type == "MESH" and not solto:
             obj.select_set(True)
     corpo = bpy.data.objects.get("camisa")

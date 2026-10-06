@@ -14,6 +14,9 @@ extends Node3D
 
 ## Quanto a perna abre, em graus, na frente e atras.
 @export var passada_graus: float = 26.0
+## Quanto o braco abre. Menor que a perna: braco de corredor balanca menos que
+## a passada, e igualar os dois deixa o boneco com cara de marionete.
+@export var bracada_graus: float = 19.0
 ## Quanto o corpo sobe e desce a cada passo, na velocidade cheia.
 @export var altura_do_salto: float = 0.045
 ## Velocidade em que o salto chega ao tamanho cheio.
@@ -21,6 +24,8 @@ extends Node3D
 
 var _perna_esq: Node3D = null
 var _perna_dir: Node3D = null
+var _braco_esq: Node3D = null
+var _braco_dir: Node3D = null
 var _corpo: Node3D = null
 var _altura_base: float = 0.0
 var _player: Node = null
@@ -65,11 +70,21 @@ func _process(delta: float) -> void:
     _ciclo += Comum.cadencia_passo(velocidade) * delta
 
     var angulo := TAU * (_ciclo + _fase) * 0.5
-    var abertura := deg_to_rad(passada_graus) * sin(angulo)
+    var onda := sin(angulo)
+    var abertura := deg_to_rad(passada_graus) * onda
     if _perna_esq != null:
         _perna_esq.rotation.x = abertura
     if _perna_dir != null:
         _perna_dir.rotation.x = -abertura
+
+    # Braco CONTRARIO a perna do mesmo lado: e assim que o corpo humano
+    # equilibra a rotacao do tronco ao correr, e o contrario disso le na hora
+    # como errado, mesmo sem a pessoa saber explicar por que.
+    var bracada := deg_to_rad(bracada_graus) * onda
+    if _braco_esq != null:
+        _braco_esq.rotation.x = -bracada
+    if _braco_dir != null:
+        _braco_dir.rotation.x = bracada
 
     # O modelo inteiro sobe duas vezes por ciclo, uma a cada pe que encosta.
     # O salto cresce com a velocidade: parado, o mesmo salto lia como pulinho.
@@ -85,4 +100,8 @@ func _coletar(no: Node) -> void:
                 _perna_esq = filho
             elif filho.name.begins_with("perna_dir"):
                 _perna_dir = filho
+            elif filho.name.begins_with("braco_esq"):
+                _braco_esq = filho
+            elif filho.name.begins_with("braco_dir"):
+                _braco_dir = filho
         _coletar(filho)

@@ -4,10 +4,9 @@
 Reaproveita as funcoes de blockout_mestre em vez de copia-las. O que muda e o
 que foi cortado, e cada corte tem motivo:
 
-  fitas ESTATICAS  o guerreiro tem fitas, mas elas entram na malha do corpo em
-                   vez de serem nos animados. Com ate 45 guerreiros, animar
-                   seriam 180 nos girando por quadro, e a essa distancia o
-                   movimento delas nao se distingue
+  sem fitas        tiradas a pedido de Bruno. Com ate 400 guerreiros na tela
+                   elas viravam ruido visual, e so o mestre precisa delas para
+                   ser identificado
   capacete menor   so aro, corpo e uma torre com telhado. Tres torres e cruz
                    viram uma mancha unica quando o boneco tem 60 pixels
   menor que o mestre  a hierarquia visual do folguedo: o mestre lidera o cordao
@@ -45,17 +44,6 @@ def construir():
     base.caixa("braco_esq", (-0.28, 0.0, 0.80), (0.11, 0.13, 0.34), "vermelho")
     base.caixa("braco_dir", (0.28, 0.0, 0.80), (0.11, 0.13, 0.34), "vermelho")
     base.caixa("cabeca", (0.0, 0.0, 1.24), (0.39, 0.35, 0.39), "pele")
-
-    # Fitas atras da cabeca, como no mestre, mas quatro em vez de seis e
-    # presas na malha do corpo: nao sao animadas.
-    cores = ("azul", "branco", "vermelho")
-    for i in range(4):
-        x = -0.115 + i * 0.077
-        comprimento = 0.78 - (i % 2) * 0.07
-        base.caixa("fita_%d" % i,
-                   (x, 0.20, 1.45 - comprimento * 0.5),
-                   (0.045, 0.02, comprimento),
-                   cores[i % 3])
 
     # Capacete reduzido: aro, corpo e uma torre. Mantem a silhueta de catedral
     # sem o custo de tres torres e uma cruz que somem no tamanho de tela real.
