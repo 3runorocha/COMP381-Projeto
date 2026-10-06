@@ -25,10 +25,55 @@ sirva só ao critério contínuo ficam para a **segunda parte do projeto**. Na
 prática isso desarma o D14 da sprint e vale como regra geral: nada de polir o
 que não foi pedido enquanto houver item obrigatório em aberto.
 
+## Piscada no cenario: em aberto, com plano (05/10/2026)
+
+Bruno ve uma piscada rapida durante a corrida. Tres causas REAIS ja foram
+encontradas e corrigidas, e o sintoma continua. Isso nao e azar: e sinal de que
+o metodo estava errado. Eu vinha levantando hipotese, corrigindo e esperando
+ele dizer se melhorou. **Comecar pela auditoria, nao por mais uma hipotese.**
+
+### Ja corrigido, nao refazer
+
+1. **Coqueiro reciclado perto da camera.** O gatilho era 13 atras do jogador, e
+   a camera fica 8 atras dele: o coqueiro era reposicionado a 5 da camera. Ele
+   proprio nao aparecia, mas a sombra dele, de 9 de altura, continuava no
+   quadro. Resolvido primeiro afastando o gatilho, depois de vez trocando a
+   reciclagem individual por um tapete periodico.
+2. **Cenario reciclado objeto a objeto.** Substituido por tapete que se repete:
+   nada se move em relacao a nada, so o no inteiro salta um periodo exato sobre
+   geometria identica.
+3. **Par de portoes nascendo a 166 unidades**, dentro do campo de visao. Passou
+   a entrar com fade de 0.65 s.
+
+### Plano para a proxima sessao
+
+**Passo 1, auditar em vez de supor.** Script de depuracao que, a cada quadro,
+registre todo no que mudou de estado bruscamente (pulou mais de 5 unidades,
+trocou visibilidade, mudou escala, mudou alfa) E teste se ele estava dentro do
+frustum da camera naquele instante. Rodar um minuto e imprimir so os eventos
+que ocorreram na tela. Se a lista vier vazia, o problema nao e geometria
+aparecendo, e renderizacao, e o caminho passa a ser outro.
+
+**Passo 2, suspeitos ainda nao tocados, em ordem de aposta.**
+
+- **Transparencia dos portoes.** Os paineis tem alfa 0.45. Objeto transparente
+  nao escreve profundidade e e ordenado por distancia, objeto a objeto: quando
+  um par novo nasce, a ordem de desenho de todos os transparentes pode trocar
+  por um quadro. **E a unica causa que explica a piscada acontecer no FUNDO e
+  no momento em que algo novo entra em cena, sem que o objeto novo seja o que
+  pisca.** Painel opaco elimina a classe inteira.
+- **Limite da sombra direcional, em 55 unidades.** Todo objeto que cruza essa
+  linha ganha ou perde sombra de uma vez, e ha 390 coqueiros e ate 400
+  guerreiros cruzando o tempo todo.
+
+**Passo 3, capturar a evidencia.** Gravar e parar no quadro, ou pausar no
+instante em que a piscada aparece, para olhar em vez de deduzir.
+
 ## Pendencias abertas (atualizado em 01/10/2026)
 
 Lista curta do que falta. Os detalhes de cada item estao nas secoes adiante.
 
+0. **Piscada no cenario.** Em aberto, com plano na secao acima.
 1. **HUD com acabamento.** O layout atual funciona (cantos livres, centro limpo,
    separador de milhar) mas e cru. Bruno quis deixar para depois da modelagem,
    que agora esta feita.
