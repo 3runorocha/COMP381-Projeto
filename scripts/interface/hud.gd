@@ -3,8 +3,12 @@ extends CanvasLayer
 ##
 ## Os dois ficam nos CANTOS, nunca no centro do topo. O centro e onde os
 ## portoes aparecem no ponto de fuga: HUD ali disputa espaco justamente com o
-## numero que o jogador precisa ler para decidir. Contorno escuro porque a
-## pista e clara e texto branco sem contorno some nela.
+## numero que o jogador precisa ler para decidir.
+##
+## As placas usam as tres cores da bandeira de Alagoas, as mesmas da roupa do
+## guerreiro: contagem em vermelho, distancia em azul, texto e borda em branco.
+## Placa opaca em vez de contorno porque a pista virou asfalto escuro e o ceu e
+## claro: texto solto some num dos dois conforme o enquadramento.
 
 const COR_SUBIU := Color(0.35, 0.95, 0.5)
 const COR_DESCEU := Color(1.0, 0.45, 0.4)
@@ -12,8 +16,9 @@ const COR_NEUTRA := Color.WHITE
 
 @export var player_path: NodePath = ^"../Player"
 
-@onready var _rotulo: Label = $Contagem
-@onready var _distancia: Label = $Distancia
+@onready var _rotulo: Label = $PlacaContagem/Caixa/Contagem
+@onready var _distancia: Label = $PlacaDistancia/Distancia
+@onready var _placa: PanelContainer = $PlacaContagem
 
 var _player: Node3D = null
 
@@ -38,10 +43,10 @@ func _on_contagem_mudou(anterior: int, novo: int) -> void:
     # atrapalhou. Isso importa porque o jogador esta olhando a pista, nao o HUD.
     var cor := COR_SUBIU if novo > anterior else COR_DESCEU
     _rotulo.modulate = cor
-    _rotulo.scale = Vector2.ONE * 1.25
+    _placa.scale = Vector2.ONE * 1.12
 
     _tween = create_tween().set_parallel(true)
-    _tween.tween_property(_rotulo, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+    _tween.tween_property(_placa, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
     _tween.tween_property(_rotulo, "modulate", COR_NEUTRA, 0.4)
 
 
@@ -57,7 +62,9 @@ func _process(_delta: float) -> void:
 ## Com o pivo no centro da caixa, o numero crescia tambem para cima e para a
 ## esquerda, e saia pela borda da tela: medido, o topo chegava a y = -9.
 func _ajustar_pivo() -> void:
-    _rotulo.pivot_offset = Vector2.ZERO
+    # O tranco agora cresce a PLACA inteira, nao so o numero: com placa, animar
+    # so o texto fazia ele vazar pela borda.
+    _placa.pivot_offset = Vector2.ZERO
 
 
 ## 23626 vira 23.626. Cinco digitos crus sao dificeis de ler de relance, e de

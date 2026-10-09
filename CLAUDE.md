@@ -86,12 +86,10 @@ comparando o conjunto de transformacoes visiveis antes e depois, para separar
 
 Lista curta do que falta. Os detalhes de cada item estao nas secoes adiante.
 
-0. **Piscada no cenario.** Causa achada e reduzida seis vezes. Nao zerada.
-1. **HUD com acabamento.** O layout atual funciona (cantos livres, centro limpo,
-   separador de milhar) mas e cru. Bruno quis deixar para depois da modelagem,
-   que agora esta feita.
-2. **Cenario de fundo.** Hoje a pista e um bloco liso entre duas bordas, com
-   neblina e nada mais. E o D12 da sprint.
+0. **Piscada.** Em 09/10 cairam de 2614 para 0 a 24 os eventos de mudanca
+   brusca dentro da tela. Aguardando Bruno confirmar na tela.
+1. ~~HUD~~ feito em 09/10, placas nas cores da bandeira.
+2. ~~Cenario de fundo~~ feito em 05/10: orla de Maceio.
 3. **Frequencia dos portoes.** A mistura de operacoes esta desequilibrada,
    subtracao em 47%, e a margem real na chegada fica em 1.18 contra o alvo de
    1.20 a 1.40. Os dois detalhados em "Divida conhecida".
@@ -261,10 +259,13 @@ caia mais rapido do que a contagem subia. Medido agora: 4.39 de largura com
   angulo aureo nenhum indice tende a seno igual a menos um, e o cordao sobrava
   varias unidades atras do que havia sido pedido.
 
-**HUD com acabamento:** o layout atual e funcional (cantos livres, centro
-limpo, separador de milhar) mas cru. Bruno quer um HUD bonito, e decidiu fazer
-isso depois de fechar a modelagem do guerreiro, para o visual do HUD conversar
-com o do personagem.
+**HUD (feito em 09/10).** Duas placas nos cantos, nas tres cores da bandeira de
+Alagoas, as mesmas da roupa do guerreiro: contagem em vermelho, distancia em
+azul, texto e borda em branco.
+
+Placa opaca em vez de texto com contorno, porque a pista virou asfalto escuro e
+o ceu e claro: texto solto some num dos dois conforme o enquadramento. O tranco
+de mudanca cresce a placa inteira, nao so o numero, senao ele vaza pela borda.
 
 **Quantidade de corpos:** fica em 25 ate existir a sprite final do guerreiro.
 
