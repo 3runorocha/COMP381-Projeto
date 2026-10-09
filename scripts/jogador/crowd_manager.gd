@@ -108,18 +108,14 @@ func _aplicar(contagem: int, instantaneo: bool) -> void:
     var centro := _centro_da_formacao()
     for i in MAX_VISIVEL:
         var corpo := _corpos[i]
-        var deve_aparecer := i < _visiveis
-        if deve_aparecer and not corpo.visible:
+        if i < _visiveis and not corpo.visible:
             corpo.visible = true
             corpo.global_position = _vaga(i, centro)
-            corpo.scale = Vector3.ONE * _escala_corpo
-            if not instantaneo:
-                _surgir(corpo)
-        elif not deve_aparecer and corpo.visible:
-            corpo.visible = false
-        elif deve_aparecer:
-            # Os que ja estavam na tela tambem mudam de tamanho: a escala
-            # depende de QUANTOS sao, entao ela muda para todos a cada portao.
+            corpo.scale = Vector3.ONE * (_escala_corpo if instantaneo else _escala_corpo * 0.1)
+        elif instantaneo:
+            # So na montagem inicial o corte e seco. Em jogo, quem some e
+            # quem entra passa pela perseguicao de escala do _process.
+            corpo.visible = i < _visiveis
             corpo.scale = Vector3.ONE * _escala_corpo
 
 
@@ -134,8 +130,21 @@ func _process(delta: float) -> void:
     # ficaria cada vez mais para tras conforme a corrida acelera.
     var ritmo := velocidade_seguir * maxf(1.0, Comum.velocidade(_lider) / 12.0)
 
-    for i in _visiveis:
+    var passo := Comum.peso(6.0, delta)
+    for i in MAX_VISIVEL:
         var corpo := _corpos[i]
+        if not corpo.visible:
+            continue
+
+        # Quem passou do limite encolhe ate sumir, em vez de apagar de uma vez.
+        # Apagar era o que sobrava de piscada: medido, dezenas de guerreiros
+        # trocavam para invisivel no mesmo quadro, a 7 unidades da camera.
+        var alvo := _escala_corpo if i < _visiveis else 0.0
+        corpo.scale = corpo.scale.lerp(Vector3.ONE * alvo, passo)
+        if alvo == 0.0 and corpo.scale.x < 0.02:
+            corpo.visible = false
+            continue
+
         var vaga := _vaga(i, centro)
         # Quem esta mais atras na formacao persegue mais devagar, o que da
         # elasticidade ao grupo em vez de um bloco rigido preso ao lider.
@@ -150,6 +159,7 @@ func _process(delta: float) -> void:
             lerpf(corpo.global_position.x, vaga.x, peso),
             vaga.y,
             vaga.z)
+
 
 
 ## Onde o grupo inteiro esta centrado, ja trazido para dentro da ponte.
@@ -200,9 +210,6 @@ func _recalcular_recuo() -> void:
     _recuo = folga_atras - mais_adiantado
 
 
-## Tranco de escala quando um guerreiro entra, para a mudanca ser visivel.
-func _surgir(corpo: Node3D) -> void:
-    var alvo := Vector3.ONE * _escala_corpo
-    corpo.scale = alvo * 0.2
-    var t := create_tween()
-    t.tween_property(corpo, "scale", alvo, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+## O tranco de entrada saiu: quem faz o corpo crescer agora e a mesma
+## perseguicao de escala que roda todo quadro, e dois donos para a mesma
+## propriedade brigariam.

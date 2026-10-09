@@ -29,6 +29,12 @@ extends Node3D
 ## Distancia total em modo fase. Zero deixa o jogo infinito.
 @export var distancia_final: float = 0.0
 @export var finish_path: NodePath = ^"../FinishLine"
+## Quanto o par precisa ficar atras antes de ser movido para a frente.
+##
+## Mover no instante do consumo e o que piscava: medido, o par saltava 198
+## unidades estando a 11 da camera, ou seja, dentro do quadro. Ele e consumido
+## na hora, mas so some de cena depois de sair de vista.
+@export var margem_atras: float = 45.0
 
 const MULTIPLICADORES: Array[int] = [2, 3]
 const DIVISORES: Array[int] = [2, 3]
@@ -42,6 +48,8 @@ const CONTAGEM_ALTA: int = 400
 
 var _player: Node3D = null
 var _fila: Array[Node3D] = []
+## Pares ja consumidos, esperando ficar longe o bastante para serem movidos.
+var _gastos: Array[Node3D] = []
 var _possiveis := ContagensPossiveis.new()
 var _z_frente: float = 0.0
 var _rng := RandomNumberGenerator.new()
@@ -74,19 +82,29 @@ func _process(_delta: float) -> void:
     # consumido, recicla assim mesmo, senao a fila trava e a pista acaba.
     var primeiro: Node3D = _fila[0]
     if primeiro.global_position.z > _player.global_position.z + 10.0:
-        _reciclar(primeiro)
+        _aposentar(primeiro)
+
+    # Os gastos esperam sair de vista antes de voltar para a frente.
+    for par in _gastos.duplicate():
+        if par.global_position.z > _player.global_position.z + margem_atras:
+            _gastos.erase(par)
+            _reciclar(par)
 
 
 func _on_par_consumido(par: Node3D) -> void:
-    # Adiado de proposito: mover um Area3D de lugar dentro do proprio
-    # body_entered dele e pedir problema.
-    _reciclar.call_deferred(par)
+    # So sai da fila. Mover agora significaria teleportar algo que esta a
+    # poucas unidades da camera, e e isso que se via como piscada.
+    _aposentar.call_deferred(par)
 
 
-func _reciclar(par: Node3D) -> void:
+func _aposentar(par: Node3D) -> void:
     if not _fila.has(par):
         return
     _fila.erase(par)
+    _gastos.append(par)
+
+
+func _reciclar(par: Node3D) -> void:
     # A contagem real ja e conhecida, entao o conjunto possivel pode ser
     # refeito do zero simulando so os pares que continuam a frente.
     _recalcular_possiveis()
