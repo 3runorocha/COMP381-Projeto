@@ -170,11 +170,16 @@ jogador, o que e invisivel porque a pista nao tem textura.
 - **A escalada de dificuldade NAO esta na velocidade, esta na janela de
   leitura.** Como o espacamento e derivado da velocidade, acelerar sozinho faz
   o portao chegar a cada 4 s para sempre, a 12 ou a 800 de velocidade: muda a
-  paisagem, nao o aperto. Quem apertar e `_tempo_leitura()`, que encolhe de 4 s
-  para 2 s ao longo dos primeiros 30 portoes e para ali. O piso de 2 s e
-  deliberado: abaixo dele o jogo testa reflexo e a matematica deixa de importar.
-- **O ritmo de portoes e 1/janela**, independente da velocidade. Depois do
-  portao 30 e um portao a cada 2 s, para sempre.
+  paisagem, nao o aperto. Quem apertar e `_tempo_leitura()`.
+- **A janela vai de 4 s a 0.9 s ao longo de 140 portoes (10/10).** O piso era
+  2 s, pensado para o jogo nunca virar teste de reflexo. Bruno pediu o
+  contrario: que a frequencia continue subindo, porque a graca esta no
+  raciocinio RAPIDO. Num jogo infinito isso e coerente, a corrida tem mesmo que
+  ficar impossivel em algum ponto, e e dali que vem a derrota.
+- **O ritmo de portoes e 1/janela**, independente da velocidade.
+- **Dois pares na fila, nao tres (10/10).** Tres enchiam o fundo de rotulos
+  borrados, e lookahead maior ainda e a causa da margem real ficar abaixo do
+  alvo.
 - **O gatilho do portao escala com a velocidade** (`velocidade / 60 * 6`), pelo
   mesmo motivo de nao haver teto: o passo por frame cresce sem limite e um
   gatilho fixo seria atravessado. Verificado a 872 unidades por segundo.
@@ -259,13 +264,14 @@ caia mais rapido do que a contagem subia. Medido agora: 4.39 de largura com
   angulo aureo nenhum indice tende a seno igual a menos um, e o cordao sobrava
   varias unidades atras do que havia sido pedido.
 
-**HUD (feito em 09/10).** Duas placas nos cantos, nas tres cores da bandeira de
-Alagoas, as mesmas da roupa do guerreiro: contagem em vermelho, distancia em
-azul, texto e borda em branco.
+**HUD (refeito em 10/10).** Contagem centrada no alto, distancia no canto
+direito, as duas SEM placa, so texto com contorno escuro. A versao de placas
+coloridas foi recusada por Bruno.
 
-Placa opaca em vez de texto com contorno, porque a pista virou asfalto escuro e
-o ceu e claro: texto solto some num dos dois conforme o enquadramento. O tranco
-de mudanca cresce a placa inteira, nao so o numero, senao ele vaza pela borda.
+A contagem fica bem no alto de proposito: os portoes aparecem da metade da tela
+para baixo, e e por pouco que os dois nao disputam espaco. Se algum dia
+encostarem, quem cede e a contagem, porque o portao e o que precisa ser lido
+para decidir.
 
 **Quantidade de corpos:** fica em 25 ate existir a sprite final do guerreiro.
 

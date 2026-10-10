@@ -15,16 +15,23 @@ extends Node3D
 @export var player_path: NodePath = ^"../Player"
 @export var cena_par: PackedScene
 ## Quantos pares ficam vivos na pista ao mesmo tempo.
-@export var pares_ativos: int = 3
+@export var pares_ativos: int = 2
 ## Segundos de viagem entre um par e o seguinte. O espacamento em unidades sai
 ## da velocidade atual: com a velocidade subindo, distancia fixa encolheria o
 ## tempo de leitura e o jogo viraria teste de reflexo.
 @export var tempo_entre_pares: float = 4.0
-## Piso da janela de leitura. Abaixo disto o jogo testa reflexo, nao
-## matematica, e a mecanica inteira perde o sentido.
-@export var tempo_minimo_entre_pares: float = 2.0
+## Piso da janela de leitura.
+##
+## Era 2.0, pensado para o jogo nunca virar teste de reflexo. Bruno pediu o
+## contrario: que a frequencia continue subindo, porque a graca esta no
+## raciocinio RAPIDO. Num jogo infinito isso e coerente, a corrida tem mesmo
+## que ficar impossivel em algum ponto, e e dali que vem a derrota.
+@export var tempo_minimo_entre_pares: float = 0.9
 ## Em quantos portoes a janela vai do inicial ao minimo.
-@export var portoes_ate_tempo_minimo: int = 30
+##
+## Subiu de 30 para 140 junto com o piso: o mesmo encolhimento espalhado por
+## mais portoes, senao a dificuldade chega ao teto em um minuto de corrida.
+@export var portoes_ate_tempo_minimo: int = 140
 @export var espacamento_minimo: float = 25.0
 ## Distancia total em modo fase. Zero deixa o jogo infinito.
 @export var distancia_final: float = 0.0

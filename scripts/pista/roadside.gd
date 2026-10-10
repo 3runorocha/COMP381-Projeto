@@ -150,8 +150,14 @@ func _materiais_que_somem() -> Array[Material]:
             if base is StandardMaterial3D:
                 var copia: StandardMaterial3D = base.duplicate()
                 copia.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_DITHER
-                copia.distance_fade_max_distance = distancia_sumico
-                copia.distance_fade_min_distance = distancia_sumico - faixa_sumico
+                # INVERTIDO de proposito. No Godot, min e a distancia em que o
+                # objeto comeca a aparecer e max aquela em que fica opaco, ou
+                # seja, o padrao e surgir de longe. Com min MAIOR que max o
+                # comportamento se inverte e ele some com a distancia, que e o
+                # que se quer. Na primeira tentativa eu troquei os dois e os
+                # coqueiros ficaram invisiveis em toda a parte visivel.
+                copia.distance_fade_min_distance = distancia_sumico
+                copia.distance_fade_max_distance = distancia_sumico - faixa_sumico
                 saida.append(copia)
             else:
                 saida.append(base)
